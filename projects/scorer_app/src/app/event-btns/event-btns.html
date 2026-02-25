@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<div>
+  <button (click)="eventDotBall()">Dot</button>
+  <button (click)="eventOneRun()">1</button>
+  <button (click)="eventTwoRuns()">2</button>
+  <button (click)="eventThreeRuns()">3</button>
+  <button (click)="eventFourRuns()">4</button>
+  <button (click)="eventSixRuns()">6</button>
+</div>
+<div>
+  <button (click)="eventExtra(wide())">Wides</button>
+  <button (click)="eventNoball()">Noball</button>
+  <button (click)="eventExtra(nbruns())">NbRuns</button>
+  <button (click)="eventExtra(byes())">Byes</button>
+  <button (click)="eventExtra('Legbyes()')">Legbyes</button>
+</div>
+<div>
+  <button (click)="eventBowled()">Bowled</button>
+  <button (click)="eventCaught()">Caught</button>
+  <button (click)="eventLbw()">Lbw</button>
+  <button (click)="eventStumped()">Stumped</button>
+  <button (click)="eventRunout()">Runout</button>
+</div>
+
+</html>

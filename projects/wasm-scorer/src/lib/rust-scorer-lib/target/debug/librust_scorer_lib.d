@@ -1,0 +1,1 @@
+/home/alex/Projects/tredge-scorer/projects/wasm-scorer/src/lib/rust-scorer-lib/target/debug/librust_scorer_lib.so: /home/alex/Projects/tredge-scorer/projects/wasm-scorer/src/lib/rust-scorer-lib/src/lib.rs

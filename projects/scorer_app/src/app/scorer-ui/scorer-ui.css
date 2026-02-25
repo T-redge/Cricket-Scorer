@@ -1,0 +1,47 @@
+div {
+  margin-bottom: 5px;
+}
+#GameInfo {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  border: solid black 2.5px;
+}
+#Teams {
+  grid-column: 1;
+}
+#Toss {
+  grid-column: 2;
+}
+#Bat {
+  grid-column: 3;
+}
+#MatchType {
+  grid-column: 4;
+}
+
+#Teams, #Toss, #Bat {
+  justify-self: center;
+}
+
+#TeamScore, #BatPair, #BowlPair {
+  width: 50%;
+  border: solid black 2.5px;
+  padding: 0px 10px 0px 10px;
+}
+
+table {
+  width: 100%;
+}
+#Name {
+  text-align: left;
+
+}
+#Overs {
+  text-align: left;
+}
+th {
+  text-decoration: underline;
+}
+#Score {
+  text-align: right;
+}

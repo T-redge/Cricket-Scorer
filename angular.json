@@ -6,5 +6,94 @@
   },
   "newProjectRoot": "projects",
   "projects": {
+    "scorer_app": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/scorer_app",
+      "sourceRoot": "projects/scorer_app/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/scorer_app/src/main.ts",
+            "tsConfig": "projects/scorer_app/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*.wasm",
+                "input": "projects/wasm-scorer/src/lib/rust-scorer-lib/pkg"
+              }
+            ],
+            "styles": [
+              "projects/scorer_app/src/styles.css"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "scorer_app:build:production"
+            },
+            "development": {
+              "buildTarget": "scorer_app:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    },
+    "wasm-scorer": {
+      "projectType": "library",
+      "root": "projects/wasm-scorer",
+      "sourceRoot": "projects/wasm-scorer/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/wasm-scorer/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/wasm-scorer/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/wasm-scorer/tsconfig.spec.json"
+          }
+        }
+      }
+    }
   }
 }

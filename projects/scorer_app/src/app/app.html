@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<header>
+  <h1>Scorer</h1>
+</header>
+
+<body>
+  @if (newGame()) {
+    @if (showTeamsUi()) {
+      <app-teamlist-ui (matchStart)="eventOccured($event)" />
+    }
+    @if (showCoinTossUi()) {
+      <app-cointoss-ui (homeTeamWin)="eventOccured($event)" (awayTeamWin)="eventOccured($event)"/>
+    }
+    @if (showRoleSelectionUi()) {
+      <app-roleselect-ui (roleBat)="eventOccured($event)" (roleBowl)="eventOccured($event)" />
+    }
+    @if (newInnings()) {
+      <app-scorer-ui />
+      @if (showSelectOpeningBatsForm()) {
+        <app-select-openers-form
+          (openingBatters)="receiveOpenerNames($event)"
+          (openerSelected)="eventOccured($event)"
+        />
+      }
+      @if (showSelectPlayerForm()) {
+        <app-select-player-form [formLabel]="formSelect()"
+          (playerChosenEv)="eventOccured($event)"
+          (playerSelect)="receivePlayerName($event)"
+        />
+      }
+      @if (showExtraForm()) {
+        <app-extra-form [formLabel]="extraFormSelect()"
+          (wideBowled)="eventOccured($event)"
+          (nbRunsBowled)="eventOccured($event)"
+          (byesBowled)="eventOccured($event)"
+          (legbyesBowled)="eventOccured($event)"
+          (totalExtras)="retrieveExtraAmount($event)"
+        />
+      }
+      @else {
+        <app-event-btns
+          (matchEvent)="eventOccured($event)"
+          (extraEvent)="receiveExtraType($event)"
+        />
+      }
+    }
+  } @else {
+    <button (click)="startNewGame()">New Game</button>
+  }
+</body>
+
+</html>

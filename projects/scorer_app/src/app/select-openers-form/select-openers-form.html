@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <form [formGroup]="openerForm">
+  <h3>Select Openers</h3>
+  <div id="PlayerOne">
+    @for (player of battingTeam(); track $index) {
+      <div>
+        <input
+          (click)="onClickP1($index)"
+          type="checkbox" id="p-{{player}}"
+          name="{{player}}" formControlName="playerOne"
+        />
+        <label for id="p-{{player}}">{{player}}</label>
+      </div>
+    }
+    <button id="ResetB1" (click)="resetPlayerOneForm()">Reset Selection</button>
+  </div>
+  <div id="PlayerTwo">
+    @for (player of battingTeam(); track $index) {
+      <div>
+        <input
+          (click)="onClickP2($index)"
+          type="checkbox" id="p-{{player}}"
+          name="{{player}}" formControlName="playerTwo"
+        />
+        <label for id="p-{{player}}">{{player}}</label>
+      </div>
+    }
+    <button id="ResetB2" (click)="resetPlayerTwoForm()">Reset Selection</button>
+  </div>
+  <button
+    id="SubmitOpeners"
+    [disabled]="disabledSubmit()" (click)="submitOpeningBatters()">
+    Submit Openers<br>Bat One: {{batOneName()}}<br>Bat Two: {{batTwoName()}}<br>
+  </button>
+</form>
+
+</html>

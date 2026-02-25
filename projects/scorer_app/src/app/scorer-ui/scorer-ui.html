@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<div id="GameInfo">
+  <h3 id="Teams">Match between {{homeTeam()}} - {{awayTeam()}}</h3>
+  <h3 id="Toss">Toss won by {{tossWinner()}}</h3>
+  <h3 id="Bat">Innings of {{batTeam()}}</h3>
+</div>
+<div id="TeamScore">
+  <table>
+    <tr>
+      <th id="Name">Team</th>
+      <th id="Overs">Overs</th>
+      <th id="Score">Score</th>
+    </tr>
+    <tr>
+      <td id="Name">{{homeTeam()}}</td>
+      <td id="Overs">{{oversAwayBowled()}}</td>
+      <td id="Score">{{homeTeamScore()}}</td>
+    </tr>
+    <tr>
+      <td id="Name">{{awayTeam()}}</td>
+      <td id="Overs">{{oversHomeBowled()}}</td>
+      <td id="Score">{{awayTeamScore()}}</td>
+  </table>
+</div>
+<div id="BatPair">
+  <table>
+    <tr>
+      <th id="Name">Batters</th>
+      <th id="Score">Runs(Balls Faced)</th>
+    </tr>
+    <tr>
+      <td id="Name">{{batOne()}}</td>
+      <td id="Score">{{returnBatterStats(batOne())}}</td>
+    </tr>
+    <tr>
+      <td id="Name">{{batTwo()}}</td>
+      <td id="Score">{{returnBatterStats(batTwo())}}</td>
+    </tr>
+  </table>
+
+</div>
+<div id="BowlPair">
+  <table>
+    <tr>
+      <th id="Name">Bowlers</th>
+      <th id="Score">O-M-W-R</th>
+      <th id="Score">Extras</th>
+    </tr>
+    <tr>
+      <td id="Name">{{bowlOne()}}</td>
+      <td id="Score">{{returnBowlerStats(bowlOne())}}</td>
+      <td id="Score">{{returnBowlerExtras(bowlOne())}}</td>
+    </tr>
+    <tr>
+      <td id="Name">{{bowlTwo()}}</td>
+      <td id="Score">{{returnBowlerStats(bowlTwo())}}</td>
+      <td id="Extras">{{returnBowlerExtras(bowlTwo())}}</td>
+    </tr>
+  </table>
+</div>
+
+</html>

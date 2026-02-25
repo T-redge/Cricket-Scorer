@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<div id="TeamLists">
+<h3>Playing XI's</h3>
+<div id="Edgewater">
+  <h3>{{homeTeamName}}</h3>
+  @for (name of homeTeamPlayers; track name) {
+  <li>{{name}}</li>
+  } @empty {
+  <li>There are no items.</li>
+  }
+</div>
+<div id="Morley">
+  <h3>{{awayTeamName}}</h3>
+  @for (name of awayTeamPlayers; track name) {
+  <li>{{name}}</li>
+  } @empty {
+  <li>There are no items.</li>
+  }
+</div>
+
+<button (click)="eventMatchStarted()" id="Confirm Teams">Confirm</button>
+</div>
+</html>

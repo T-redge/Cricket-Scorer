@@ -1,0 +1,40 @@
+form {
+  position: absolute;
+  z-index: 1;
+  top: 146px;
+  width: 472px;
+  border: solid 2.5px black;
+  background: white;
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  column-gap: 20%;
+
+}
+h3 {
+  grid-column: 1 /span 2;
+  text-align: center;
+  margin: 5px 0px 5px 0px;
+  text-decoration: underline;
+}
+#PlayerOne {
+  grid-column: 1;
+}
+#PlayerTwo {
+  grid-column: 2;
+}
+#SubmitOpeners {
+  grid-column: 1 /span 2;
+  margin-bottom: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+#ResetB1, #ResetB2 {
+  grid-column: 1;
+  padding-left: 16%;
+  padding-right: 16%;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

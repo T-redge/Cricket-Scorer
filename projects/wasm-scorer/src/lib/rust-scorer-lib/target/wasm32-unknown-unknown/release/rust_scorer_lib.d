@@ -1,0 +1,1 @@
+/home/alex/Projects/tredge-scorer/projects/wasm-scorer/src/lib/rust-scorer-lib/target/wasm32-unknown-unknown/release/rust_scorer_lib.wasm: /home/alex/Projects/tredge-scorer/projects/wasm-scorer/src/lib/rust-scorer-lib/src/lib.rs
