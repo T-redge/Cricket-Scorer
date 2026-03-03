@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
 import { App } from '../app';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatchEvents } from '../event-btns/event-btns';
+import { MatchEvents } from '../event-class/match-events';
 
 @Component({
   selector: 'app-select-openers-form',

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, inject, Output } from '@angular/core';
-import { MatchEvents } from '../event-btns/event-btns';
 import { App } from '../app';
+import { MatchEvents } from '../event-class/match-events';
 
 @Component({
   selector: 'app-roleselect-ui',

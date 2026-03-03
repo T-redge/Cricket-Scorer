@@ -1,0 +1,34 @@
+#RunForm {
+  display: grid;
+  width: 472px;
+  height: 87px;
+  border: solid 2.5px black;
+  background: white;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  grid-template-rows: 3;
+}
+h4 {
+  grid-column: 1 /span 3;
+  grid-row: 1;
+  margin: 5px 0 5px 0;
+  text-decoration: underline;
+  text-align: center;
+}
+#Dec {
+  grid-column: 1;
+  grid-row: 2;
+}
+#Inc {
+  grid-column:3;
+  grid-row: 2;
+}
+#Confirm {
+  grid-column: 2;
+  grid-row: 3;
+}
+label {
+  text-align: center;
+}
+#Dec,#Inc,#Confirm {
+  margin: 0 5px 5px 5px;
+}

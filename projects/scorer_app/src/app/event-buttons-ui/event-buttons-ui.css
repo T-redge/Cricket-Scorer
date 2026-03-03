@@ -1,0 +1,32 @@
+div {
+  border: solid 2.5px black;
+  width: 472px;
+  height: 87px;
+  display: grid;
+  background: white;
+}
+h4 {
+  text-decoration: underline;
+  margin: 5px 0 0 0;
+  grid-column: 1 /span 4;
+  grid-row: 1;
+  text-align: center;
+}
+button {
+  margin: 0 5px 5px 5px;
+}
+#EventButtons {
+  grid-template-columns: repeat(4,minmax(0,1fr));
+}
+#Dot {
+  grid-column: 1;
+}
+#Runs {
+  grid-column: 2;
+}
+#Extra {
+  grid-column: 3;
+}
+#Wicket {
+  grid-column: 4;
+}

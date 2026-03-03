@@ -1,6 +1,5 @@
 import { signal } from "@angular/core";
 import { PlayerClass } from "../player-class/player-class";
-import { MatchEvents } from "../event-btns/event-btns";
 
 export class Team {
   private tossWon = signal(false);
@@ -78,7 +77,7 @@ export class Team {
   setTossResult(win: boolean) {
     this.tossWon.set(win);
   }
-  setTeamRole(role: MatchEvents) {
+  setTeamRole(role: string) {
     this.teamRole.set(role);
   }
   strikeRotated() {

@@ -1,5 +1,5 @@
-import { Component, EventEmitter, input, Output, signal } from '@angular/core';
-import { MatchEvents } from '../event-btns/event-btns';
+import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { ExtraEvent } from '../event-class/delivery-events';
 
 
 @Component({
@@ -9,23 +9,45 @@ import { MatchEvents } from '../event-btns/event-btns';
   styleUrl: './extra-form.css',
 })
 export class ExtraForm {
-  @Output() wideBowled: EventEmitter<MatchEvents> = new EventEmitter();
-  @Output() nbRunsBowled: EventEmitter<MatchEvents> = new EventEmitter();
-  @Output() byesBowled: EventEmitter<MatchEvents> = new EventEmitter();
-  @Output() legbyesBowled: EventEmitter<MatchEvents> = new EventEmitter();
+  @Output() wideEv: EventEmitter<ExtraEvent> = new EventEmitter();
+  @Output() nbEv: EventEmitter<ExtraEvent> = new EventEmitter();
+  @Output() byeEv: EventEmitter<ExtraEvent> = new EventEmitter();
+  @Output() legbyeEv: EventEmitter<ExtraEvent> = new EventEmitter();
 
   @Output() totalExtras: EventEmitter<number> = new EventEmitter();
 
-  formLabel = input('');
+  formLabel = signal('');
+  showTotalConcededForm = signal(false);
 
   numExtras = signal(1);
+
+  wideBowled() {
+    this.formLabel.set('Wide');
+    this.showTotalConcededForm.set(true);
+  }
+  nbBowled() {
+    this.formLabel.set('Noball');
+    this.numExtras.set(0);
+    this.showTotalConcededForm.set(true);
+
+  }
+  byesBowled() {
+    this.formLabel.set('Byes');
+    this.showTotalConcededForm.set(true);
+
+  }
+  legbyesBowled() {
+    this.formLabel.set('Legbyes');
+    this.showTotalConcededForm.set(true);
+
+  }
 
   incrementExtras() {
     if (this.formLabel() === 'Wide') {
       if (this.numExtras() < 5) {
         this.numExtras.update(curr => curr + 1);
       }
-    } else if (this.formLabel() === 'NbRuns') {
+    } else if (this.formLabel() === 'Noball') {
       if (this.numExtras() < 6) {
         this.numExtras.update(curr => curr + 1);
         if (this.numExtras() === 5) {
@@ -39,32 +61,36 @@ export class ExtraForm {
     }
   }
   decrementExtras() {
-    if (this.numExtras() > 1) {
-      this.numExtras.update(curr => curr - 1);
-      if (this.formLabel() === 'NbRuns' && this.numExtras() === 5) {
+    if (this.formLabel() === 'Noball') {
+      if (this.numExtras() > 0) {
         this.numExtras.update(curr => curr - 1);
+        if (this.numExtras() === 5) {
+          this.numExtras.update(curr => curr - 1);
+        }
       }
+    } else if (this.numExtras() > 1) {
+      this.numExtras.update(curr => curr - 1);
     }
   }
   confirmExtrasAmount() {
     if (this.formLabel() === 'Wide') {
       this.totalExtras.emit(this.numExtras());
-      this.wideBowled.emit(MatchEvents.Wides)
-    } else if (this.formLabel() === 'NbRuns') {
+      this.wideEv.emit(ExtraEvent.Wides)
+    } else if (this.formLabel() === 'Noball') {
       this.totalExtras.emit(this.numExtras());
-      this.nbRunsBowled.emit(MatchEvents.NbRuns);
+      this.nbEv.emit(ExtraEvent.NbRuns);
     } else if (this.formLabel() === 'Byes') {
       this.totalExtras.emit(this.numExtras());
-      this.byesBowled.emit(MatchEvents.Byes);
+      this.byeEv.emit(ExtraEvent.Byes);
     } else {
       this.totalExtras.emit(this.numExtras());
-      this.legbyesBowled.emit(MatchEvents.Legbyes);
+      this.legbyeEv.emit(ExtraEvent.Legbyes);
     }
   }
   returnTitleText(): string {
     if (this.formLabel() === "Wide") {
       return "wides";
-    } else if (this.formLabel() === "NbRuns") {
+    } else if (this.formLabel() === "Noball") {
       return "runs scored";
     } else if (this.formLabel() === "Byes") {
       return "byes";

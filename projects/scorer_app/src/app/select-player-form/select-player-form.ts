@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, input, Output, signal } from '@angular/core';
 import { App } from '../app';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { MatchEvents } from '../event-btns/event-btns';
+import { MatchEvents } from '../event-class/match-events';
 
 @Component({
   selector: 'app-select-player-form',
@@ -56,7 +56,10 @@ export class SelectPlayerForm {
   @Output() playerChosenEv: EventEmitter<MatchEvents> = new EventEmitter();
 
   confirmPlayerChosenEv() {
-    this.playerChosenEv.emit(MatchEvents.PlayerChosen);
+    if (this.formLabel() === 'Bowl') {
+      this.confirmPlayerSelect();
+      this.playerChosenEv.emit(MatchEvents.BowlerChosen);
+    }
   }
 
   confirmPlayerSelect() {

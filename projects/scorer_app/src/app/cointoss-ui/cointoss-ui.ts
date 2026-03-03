@@ -1,6 +1,6 @@
 import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { App } from '../app';
-import { MatchEvents } from '../event-btns/event-btns';
+import { MatchEvents } from '../event-class/match-events';
 
 @Component({
   selector: 'app-cointoss-ui',
@@ -23,5 +23,4 @@ export class CointossUi {
   coinTossWinAway() {
     this.awayTeamWin.emit(MatchEvents.AwayCoinWin);
   }
-
 }

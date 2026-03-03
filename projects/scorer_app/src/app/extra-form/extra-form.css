@@ -1,23 +1,28 @@
 div {
   border: solid 2.5px black;
   width: 472px;
+  height: 87px;
   display: grid;
-  grid-template-columns: auto auto auto;
-  grid-template-rows: auto auto auto;
   background: white;
+}
+#ExtraSelect {
+  grid-template-columns: repeat(4,minmax(0,1fr));
+}
+#ExtraRuns {
+  grid-template-columns: repeat(3,minmax(0,1fr));
+}
+#type {
+  margin: 0 5px 5px 5px;
 }
 h4 {
   grid-row: 1;
-  grid-column: 1 /span 3;
+  grid-column: 1 /span 4;
   text-align: center;
-  margin: 5px 0 5px 0;
+  margin: 5px 0 0 0;
   text-decoration: underline;
 }
 label {
   text-align: center;
-}
-button {
-  margin: 0 5px 5px 5px;
 }
 #Dec {
   grid-row: 2;
@@ -30,5 +35,8 @@ button {
 #Confirm {
   grid-row: 3;
   grid-column: 2;
+}
+#Dec, #Inc, #Confirm {
+  margin: 0px 5px 5px 5px;
 }
 
