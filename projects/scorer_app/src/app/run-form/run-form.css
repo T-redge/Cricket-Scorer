@@ -1,16 +1,16 @@
 #RunForm {
   display: grid;
-  width: 472px;
-  height: 87px;
   border: solid 2.5px black;
   background: white;
   grid-template-columns: repeat(3,minmax(0,1fr));
-  grid-template-rows: 3;
+  grid-template-rows: 2;
+  grid-column-gap: 10px;
+  padding: 10px;
 }
 h4 {
   grid-column: 1 /span 3;
   grid-row: 1;
-  margin: 5px 0 5px 0;
+  margin: 0 0 10px 0;
   text-decoration: underline;
   text-align: center;
 }
@@ -24,11 +24,8 @@ h4 {
 }
 #Confirm {
   grid-column: 2;
-  grid-row: 3;
-}
-label {
-  text-align: center;
+  grid-row: 2;
 }
 #Dec,#Inc,#Confirm {
-  margin: 0 5px 5px 5px;
+  padding: 10px;
 }

@@ -2,20 +2,16 @@
 <html>
 <div id="TeamLists">
 <h3>Playing XI's</h3>
-<div id="Edgewater">
-  <h3>{{homeTeamName}}</h3>
-  @for (name of homeTeamPlayers; track name) {
+<div id="Home">
+  <h4>{{returnHomeName()}}</h4>
+  @for (name of returnHomePlayerList(); track $index) {
   <li>{{name}}</li>
-  } @empty {
-  <li>There are no items.</li>
   }
 </div>
-<div id="Morley">
-  <h3>{{awayTeamName}}</h3>
-  @for (name of awayTeamPlayers; track name) {
+<div id="Away">
+  <h4>{{returnAwayName()}}</h4>
+  @for (name of returnAwayPlayerList(); track $index) {
   <li>{{name}}</li>
-  } @empty {
-  <li>There are no items.</li>
   }
 </div>
 

@@ -1,18 +1,19 @@
 #WicketForm {
   border: solid 2.5px black;
-  width: 472px;
-  height: 87px;
   display: grid;
   grid-template-columns: repeat(5,minmax(0,1fr));
   grid-template-rows: 2;
+  grid-gap: 10px;
   background: white;
+  padding: 10px;
+
 }
 h4 {
   grid-column: 1 /span 5;
   text-align: center;
-  margin: 5px 0 0 0;
   text-decoration: underline;
+  margin: 0;
 }
 button {
-  margin: 0 5px 5px 5px;
+  padding: 10px;
 }

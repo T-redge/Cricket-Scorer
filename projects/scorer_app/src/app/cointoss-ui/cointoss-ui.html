@@ -2,9 +2,9 @@
 <html>
 
 <div>
-  <h3>Who won the toss?</h3>
-  <button (click)="coinTossWinHome()">{{homeTeamName}}</button>
-  <button (click)="coinTossWinAway()">{{awayTeamName}}</button>
+  <h4>Who won the toss?</h4>
+  <button id="Home" (click)="coinTossWinHome()">{{returnHomeName()}}</button>
+  <button id="Away" (click)="coinTossWinAway()">{{returnAwayName()}}</button>
 </div>
 
 </html>

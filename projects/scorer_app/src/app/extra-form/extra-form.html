@@ -3,18 +3,17 @@
 @if (!showTotalConcededForm()) {
 <div id="ExtraSelect">
   <h4>What extra was bowled?</h4>
-  <button id="type" (click)="wideBowled()">Wide</button>
-  <button id="type" (click)="nbBowled()">Noball</button>
-  <button id="type" (click)="byesBowled()">Byes</button>
-  <button id="type" (click)="legbyesBowled()">Legbyes</button>
+  <button id="type-w" (click)="wideBowled()">Wide</button>
+  <button id="type-n" (click)="nbBowled()">Noball</button>
+  <button id="type-b" (click)="byesBowled()">Byes</button>
+  <button id="type-lb" (click)="legbyesBowled()">Legbyes</button>
 </div>
 } @else {
 <div id="ExtraRuns">
   <h4>How many {{returnTitleText()}}</h4>
   <button id="Dec" (click)="decrementExtras()">-</button>
-  <label>{{numExtras()}}</label>
+  <button id="Confirm" (click)=confirmExtrasAmount()>Confirm: {{numExtras()}}</button>
   <button id="Inc" (click)="incrementExtras()">+</button>
-  <button id="Confirm" (click)="confirmExtrasAmount()">Confirm</button>
 </div>
 }
 

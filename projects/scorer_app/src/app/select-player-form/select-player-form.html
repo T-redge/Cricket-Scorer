@@ -2,10 +2,12 @@
 <html>
   <div id="Form">
     <h3>Select {{returnPlayerType()}}</h3>
-    @for (player of returnTeamForm(); track player) {
-    <input id="playerChosen" type="radio" value="{{player}}" [formControl]="playerChosen" />
-    <label for="playerChosen">{{player}}</label>
+    @for (player of returnTeamForm(); track $index) {
+    <div id="pSelect">
+      <input id="id-{{player}}" type="radio" value="{{player}}" [formControl]="playerChosen" />
+      <label id="id" for="id-{{player}}">{{player}}</label>
+    </div>
     }
-    <button (click)="confirmPlayerChosenEv()">Confirm:<br>{{returnPlayerName()}}</button>
+    <button (click)="emitPlayerChosenEvent()">Confirm: {{returnPlayerName()}}</button>
   </div>
 </html>

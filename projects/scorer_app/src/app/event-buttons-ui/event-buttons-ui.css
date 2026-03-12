@@ -1,22 +1,22 @@
 div {
   border: solid 2.5px black;
-  width: 472px;
-  height: 87px;
   display: grid;
   background: white;
+  padding: 10px;
 }
 h4 {
   text-decoration: underline;
-  margin: 5px 0 0 0;
+  margin: 0 0 10px 0;
   grid-column: 1 /span 4;
   grid-row: 1;
   text-align: center;
 }
 button {
-  margin: 0 5px 5px 5px;
+  padding: 10px;
 }
 #EventButtons {
   grid-template-columns: repeat(4,minmax(0,1fr));
+  grid-column-gap: 10px;
 }
 #Dot {
   grid-column: 1;
@@ -29,4 +29,7 @@ button {
 }
 #Wicket {
   grid-column: 4;
+}
+#EndOver {
+  grid-column: 2 /span 2;
 }

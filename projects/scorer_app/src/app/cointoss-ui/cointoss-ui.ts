@@ -1,6 +1,7 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, EventEmitter, inject, input, InputSignal, Output } from '@angular/core';
 import { App } from '../app';
 import { MatchEvents } from '../event-class/match-events';
+import { Team } from '../team-class/team-class';
 
 @Component({
   selector: 'app-cointoss-ui',
@@ -9,10 +10,23 @@ import { MatchEvents } from '../event-class/match-events';
   styleUrl: './cointoss-ui.css',
 })
 export class CointossUi {
-  teams = inject(App);
+  homeTeamName: InputSignal<string | undefined> = input();
+  awayTeamName: InputSignal<string | undefined> = input();
 
-  homeTeamName = this.teams.homeTeamName;
-  awayTeamName = this.teams.awayTeamName;
+  returnHomeName(): string {
+    if (this.homeTeamName() !== undefined) {
+      return this.homeTeamName()!;
+    } else {
+      return "Default Home"
+    }
+  }
+  returnAwayName(): string {
+    if (this.awayTeamName() !== undefined) {
+      return this.awayTeamName()!;
+    } else {
+      return "Default Away";
+    }
+  }
 
   @Output() homeTeamWin: EventEmitter<MatchEvents> = new EventEmitter();
   @Output() awayTeamWin: EventEmitter<MatchEvents> = new EventEmitter();

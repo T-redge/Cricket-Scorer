@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, input, Output } from '@angular/core';
 import { DeliveryEvents } from '../event-class/delivery-events';
+import { MatchEvents } from '../event-class/match-events';
 
 @Component({
   selector: 'app-event-buttons-ui',
@@ -8,21 +9,8 @@ import { DeliveryEvents } from '../event-class/delivery-events';
   styleUrl: './event-buttons-ui.css',
 })
 export class EventButtonsUi {
-  @Output() eventDot: EventEmitter<DeliveryEvents> = new EventEmitter();
-  @Output() eventRuns: EventEmitter<DeliveryEvents> = new EventEmitter();
-  @Output() eventExtras: EventEmitter<DeliveryEvents> = new EventEmitter();
-  @Output() eventWicket: EventEmitter<DeliveryEvents> = new EventEmitter();
+  overComplete = input(false);
+  inningComplete = input(false);
 
-  emitDotEvent() {
-    this.eventDot.emit(DeliveryEvents.DotBall);
-  }
-  emitRunEvent() {
-    this.eventRuns.emit(DeliveryEvents.RunEvent);
-  }
-  emitExtraEvent() {
-    this.eventRuns.emit(DeliveryEvents.ExtraEvent);
-  }
-  emitWicketEvent() {
-    this.eventWicket.emit(DeliveryEvents.WicketEvent);
-  }
+  @Output() dotEvent: EventEmitter<number> = new EventEmitter();
 }

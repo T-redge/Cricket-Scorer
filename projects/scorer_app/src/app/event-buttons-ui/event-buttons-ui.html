@@ -2,10 +2,14 @@
 <html>
 <div id="EventButtons">
   <h4>Delivery Event</h4>
-  <button id="Dot" (click)="emitDotEvent()">Dot</button>
-  <button id="Runs" (click)="emitRunEvent()">Runs</button>
-  <button id="Extra" (click)="emitExtraEvent()">Extra</button>
-  <button id="Wicket" (click)="emitWicketEvent()">Wicket</button>
+    @if (overComplete()) {
+      <button id="EndOver" >End Over</button>
+    } @else {
+      <button id="Dot" >Dot</button>
+      <button id="Runs" >Runs</button>
+      <button id="Extra" >Extra</button>
+      <button id="Wicket" >Wicket</button>
+    }
 </div>
 
 </html>

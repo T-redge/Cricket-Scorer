@@ -1,0 +1,11 @@
+#Commentary {
+  border: solid 2.5px black;
+  background: white;
+  padding: 10px;
+  display: grid;
+}
+h4 {
+  grid-column: 1;
+  margin: 0;
+  text-decoration: underline;
+}

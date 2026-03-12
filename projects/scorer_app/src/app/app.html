@@ -8,62 +8,44 @@
   @if (newGame()) {
     @if (showTeamsUi()) {
       <app-teamlist-ui
-        (matchStart)="matchEvents($event)"
+      [homeTeam]="returnHomeTeam()"
+      [awayTeam]="returnAwayTeam()"
+      (matchStart)="matchEvents($event)"
       />
     }
     @if (showCoinTossUi()) {
       <app-cointoss-ui
-        (homeTeamWin)="matchEvents($event)"
-        (awayTeamWin)="matchEvents($event)"
+      [homeTeamName]="homeTeamName()"
+      [awayTeamName]="awayTeamName()"
       />
     }
     @if (showRoleSelectionUi()) {
       <app-roleselect-ui
-        (roleBat)="matchEvents($event)"
-        (roleBowl)="matchEvents($event)"
+      [homeTeam]="returnHomeTeam()"
+      [awayTeam]="returnAwayTeam()"
       />
     }
-    @if (newInnings()) {
+    @if (newInningsStarted()) {
       <app-scorer-ui />
+      <app-commentary-ui />
       @if (showSelectOpeningBatsForm()) {
-        <app-select-openers-form
-          (openingBatters)="receiveOpenerNames($event)"
-          (openerSelected)="matchEvents($event)"
-        />
+        <app-select-openers-form />
       }
       @if (showSelectPlayerForm()) {
-        <app-select-player-form
-          [formLabel]="formSelect()"
-          (playerSelect)="receivePlayerName($event)"
-          (playerChosenEv)="matchEvents($event)"
-        />
+        <app-select-player-form />
       }
-      @if (showExtraForm()) {
-        <app-extra-form
-          (wideEv)="extraEvent($event)"
-          (nbEv)="extraEvent($event)"
-          (byeEv)="extraEvent($event)"
-          (legbyeEv)="extraEvent($event)"
-        />
-      } @else if(showRunForm()) {
-        <app-run-form
-          (totalRuns)="runEvent($event)"
-        />
-      } @else if(showWicketForm()) {
-        <app-wicket-form
-          (wicketTaken)="wicketEvent($event)"
-        />
-      } @else {
-        <app-event-buttons-ui
-          (eventDot)="deliveryEvent($event)"
-          (eventRuns)="deliveryEvent($event)"
-          (eventExtras)="deliveryEvent($event)"
-          (eventWicket)="deliveryEvent($event)"
-        />
+      <app-event-buttons-ui />
+      @if (showEndOverUi()) {
+        <app-end-over-ui />
+      }
+      @if (showEndInningUi()) {
+        <app-end-inning-ui />
       }
     }
   } @else {
-    <button (click)="startNewGame()">New Game</button>
+    <app-match-settings-form
+      (setMatchSettings)="matchEvents($event)"
+    />
   }
 </body>
 </html>

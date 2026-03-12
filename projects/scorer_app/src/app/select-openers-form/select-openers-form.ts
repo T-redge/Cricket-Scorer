@@ -1,8 +1,12 @@
-import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
-import { App } from '../app';
+import { Component, EventEmitter, input, InputSignal, Output, signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatchEvents } from '../event-class/match-events';
-
+import { Team } from '../team-class/team-class';
+import { MatchEventTeams } from '../match-settings-form/match-settings-form';
+export type OpeningBats = {
+  b1: string,
+  b2: string,
+};
 @Component({
   selector: 'app-select-openers-form',
   imports: [ReactiveFormsModule],
@@ -10,50 +14,42 @@ import { MatchEvents } from '../event-class/match-events';
   styleUrl: './select-openers-form.css',
 })
 export class SelectOpenersForm {
-  teams = inject(App);
-  htPlayers = this.createHomePlayerList();
-  atPlayers = this.createAwayPlayerList();
+  homeTeam: InputSignal<Team | undefined> = input();
+  awayTeam: InputSignal<Team | undefined> = input();
 
-  battingTeam = signal(this.returnBattingTeam());
-  returnBattingTeam() {
-    let ht = this.teams.returnHomeTeam().returnTeamRole();
-    if (ht === 'Batting') {
-      return this.htPlayers;
+  batTeam: WritableSignal<Array<string>> = signal(this.returnBattingTeam());
+
+  returnBattingTeam(): Array<string> {
+    let ht = this.homeTeam();
+    let at = this.awayTeam();
+    if (ht !== undefined && at !== undefined) {
+      if (ht.returnTeamRole() === 'Batting') {
+        return ht.returnPlayerNames();
+      } else {
+        return at.returnPlayerNames();
+      }
     } else {
-      return this.atPlayers;
+      return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
     }
   }
+
   batOneSelected = signal(false);
   batTwoSelected = signal(false);
 
   batOneName = signal('');
   batTwoName = signal('');
 
-  @Output() openingBatters: EventEmitter<[string, string]> = new EventEmitter();
-  @Output() openerSelected: EventEmitter<MatchEvents> = new EventEmitter();
+  @Output() openingBatters: EventEmitter<MatchEventTeams> = new EventEmitter();
 
-  createHomePlayerList(): string[] {
-    let teamArray = new Array;
-    for (let name of this.teams.returnHomeTeam().returnPlayerNames()) {
-      teamArray.push(name);
-    }
-    return teamArray;
-  }
-  createAwayPlayerList(): string[] {
-    let teamArray = new Array;
-    for (let name of this.teams.returnAwayTeam().returnPlayerNames()) {
-      teamArray.push(name);
-    }
-    return teamArray;
-  }
   openerForm = new FormGroup({
     playerOne: new FormControl(false),
     playerTwo: new FormControl(false),
   });
+
   onClickP1(index: number) {
     if (!this.openerForm.controls.playerOne.value) {
       this.batOneSelected.set(true);
-      let name = this.battingTeam().at(index)!;
+      let name = this.batTeam().at(index)!;
       this.batOneName.set(name);
       this.openerForm.controls.playerOne.disable();
     } else {
@@ -64,7 +60,7 @@ export class SelectOpenersForm {
   onClickP2(index: number) {
     if (!this.openerForm.controls.playerTwo.value) {
       this.batTwoSelected.set(true);
-      let name = this.battingTeam().at(index)!;
+      let name = this.batTeam().at(index)!;
       this.batTwoName.set(name);
       this.openerForm.controls.playerTwo.disable();
     } else {
@@ -92,11 +88,14 @@ export class SelectOpenersForm {
     this.batTwoName.set('');
   }
   submitOpeningBatters() {
-    let bats: [string, string] = ['', ''];
-    bats[0] = (this.batOneName());
-    bats[1] = (this.batTwoName());
-    console.log(bats);
-    this.openingBatters.emit(bats);
-    this.openerSelected.emit(MatchEvents.OpenersChosen);
+    let openers: OpeningBats = {
+      b1: this.batOneName(),
+      b2: this.batTwoName()
+    };
+    let emitEventData: MatchEventTeams = {
+      event: MatchEvents.OpenersChosen,
+      data: openers,
+    };
+    this.openingBatters.emit(emitEventData);
   }
 }

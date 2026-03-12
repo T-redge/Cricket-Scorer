@@ -1,4 +1,4 @@
-import { Component, signal, type OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, signal, WritableSignal, type OnInit } from '@angular/core';
 import { load_teamone_file, load_teamtwo_file, initRustWasm } from 'wasm-scorer';
 import { TeamlistUi } from './teamlist-ui/teamlist-ui';
 import { CointossUi } from './cointoss-ui/cointoss-ui';
@@ -9,34 +9,83 @@ import { SelectPlayerForm } from './select-player-form/select-player-form';
 import { SelectOpenersForm } from './select-openers-form/select-openers-form';
 import { ExtraForm } from './extra-form/extra-form';
 import { EventButtonsUi } from './event-buttons-ui/event-buttons-ui';
-import { DeliveryEvents, ExtraEvent, RunEvent, WicketEvent } from './event-class/delivery-events';
+import { DeliveryEvents, DeliveryType } from './event-class/delivery-events';
 import { MatchEvents } from './event-class/match-events';
 import { RunForm } from './run-form/run-form';
 import { WicketForm } from './wicket-form/wicket-form';
+import { MatchClass, NumberOvers } from './match-class/match-class';
+import { InningsClass } from './innings-class/innings-class';
+import { OverClass } from './over-class/over-class';
+import { EndOverUi } from './end-over-ui/end-over-ui';
+import { EndInningUi } from './end-inning-ui/end-inning-ui';
+import { CommentaryUi } from './commentary-ui/commentary-ui';
+import { MatchEventTeams, MatchSettingsForm, MatchSetting } from './match-settings-form/match-settings-form';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [WicketForm, RunForm, EventButtonsUi, TeamlistUi, CointossUi, RoleselectUi, ScorerUi, SelectPlayerForm, SelectOpenersForm, ExtraForm],
+  imports: [MatchSettingsForm, CommentaryUi, EndInningUi, EndOverUi, WicketForm, RunForm, EventButtonsUi, TeamlistUi, CointossUi, RoleselectUi, ScorerUi, SelectPlayerForm, SelectOpenersForm, ExtraForm],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App implements OnInit {
-  teamsMap: Map<string, Team> = new Map;
-
-  homeTeamName = "Edgewater";
-  awayTeamName = "Morley";
-
   ngOnInit() {
     initRustWasm();
   }
 
-  loadTeams() {
-    this.teamsMap.set(this.homeTeamName, new Team);
-    this.teamsMap.set(this.awayTeamName, new Team);
+  homeTeamName: WritableSignal<string> = signal('');
+  awayTeamName: WritableSignal<string> = signal('');
+  maxOvers: WritableSignal<NumberOvers> = signal(NumberOvers.Default);
 
-    this.teamsMap.get(this.homeTeamName)!.loadPlayers(load_teamone_file());
-    this.teamsMap.get(this.awayTeamName)!.loadPlayers(load_teamtwo_file());
+  currentMatch: WritableSignal<MatchClass> = signal(new MatchClass());
+  currentInnings: WritableSignal<InningsClass> = signal(new InningsClass(NumberOvers.Default));
+  currentOver: WritableSignal<OverClass> = signal(new OverClass());
+
+  teamsMap: WritableSignal<Map<string, Team>> = signal(new Map);
+
+  newGame = signal(false);
+  newMatchStarted = signal(false);
+  newInningsStarted = signal(false);
+  showEndInningUi = signal(false);
+  currentDelivery = signal('');
+  deliveryComplete = signal(false);
+  showTeamsUi = signal(false);
+  showCoinTossUi = signal(false);
+  showRoleSelectionUi = signal(false);
+  showBtnUi = signal(false);
+  showSelectOpeningBatsForm = signal(false);
+  showSelectPlayerForm = signal(false);
+  formSelect = signal('Bowl');
+  showExtraForm = signal(false);
+  extraFormTotal = signal(0);
+  showEndOverUi = signal(false);
+  showRunForm = signal(false);
+  runFormTotal = signal(0);
+  showWicketForm = signal(false);
+  wicketFormDismissal = signal('');
+  event = signal('');
+
+  setMatchSettings(settings: MatchSetting) {
+    let ht = settings.home;
+    let at = settings.away;
+    let ov = settings.overs;
+
+    this.homeTeamName.set(ht);
+    this.awayTeamName.set(at);
+    this.maxOvers.set(ov);
+  }
+  loadTeams() {
+    this.teamsMap().set(this.homeTeamName(), new Team);
+    this.teamsMap().set(this.awayTeamName(), new Team);
+    this.teamsMap().get(this.homeTeamName())!.setTeamName(this.homeTeamName());
+    this.teamsMap().get(this.awayTeamName())!.setTeamName(this.awayTeamName());
+    this.teamsMap().get(this.homeTeamName())!.loadPlayers(load_teamone_file());
+    this.teamsMap().get(this.awayTeamName())!.loadPlayers(load_teamtwo_file());
+  }
+  startNewGame() {
+    this.loadTeams();
+    this.newGame.set(true);
+    this.showTeamsUi.set(true);
   }
   receiveOpenerNames(namesEv: [string, string]) {
     let batTeam = this.returnBattingTeam();
@@ -44,7 +93,6 @@ export class App implements OnInit {
     batTeam.setBatterTwo(namesEv[1]);
   }
   receivePlayerName(nameEv: string) {
-    console.log(nameEv);
     let bowlTeam = this.returnBowlingTeam();
     if (this.formSelect() === 'Bowl') {
       bowlTeam.setLastBowler(bowlTeam.returnCurrentBowler());
@@ -52,147 +100,55 @@ export class App implements OnInit {
     }
   }
   returnHomeTeam(): Team {
-    return this.teamsMap.get(this.homeTeamName)!;
+    let name = this.homeTeamName();
+    return this.teamsMap().get(name)!;
   }
   returnAwayTeam(): Team {
-    return this.teamsMap.get(this.awayTeamName)!;
+    let name = this.awayTeamName();
+    return this.teamsMap().get(name)!;
   }
   returnBattingTeam(): Team {
-    let ht = this.returnHomeTeam().returnTeamRole();
+    let ht = this.returnHomeTeam()!.returnTeamRole();
     if (ht === 'Batting') {
-      return this.returnHomeTeam();
+      return this.returnHomeTeam()!;
     } else {
       return this.returnAwayTeam();
     }
   }
   returnBowlingTeam(): Team {
-    let ht = this.returnHomeTeam().returnTeamRole();
+    let ht = this.returnHomeTeam()!.returnTeamRole();
     if (ht === 'Bowling') {
-      return this.returnHomeTeam();
+      return this.returnHomeTeam()!;
     } else {
       return this.returnAwayTeam();
     }
   }
-
-  newGame = signal(false);
-  startNewGame() {
-    this.loadTeams();
-    this.newGame.set(true);
+  returnCurrentOver(): OverClass {
+    return this.currentOver();
   }
-  newInnings = signal(false);
+  returnOverCount(): string {
+    let overs = this.currentInnings().returnOverCount().toString();
+    let deliveries = this.currentOver().returnDeliveryCount().toString();
+    let count = overs + '.' + deliveries;
 
-  showTeamsUi = signal(true);
-  showCoinTossUi = signal(false);
-  showRoleSelectionUi = signal(false);
-  showBtnUi = signal(false);
-  showSelectOpeningBatsForm = signal(false);
-  showSelectPlayerForm = signal(false);
-  formSelect = signal('Bowl');
-
-  showExtraForm = signal(false);
-  extraFormTotal = signal(0);
+    return count;
+  }
   retrieveExtraAmount(extraEv: number) {
     this.extraFormTotal.set(extraEv);
     return extraEv;
   }
-
-  showRunForm = signal(false);
-  runFormTotal = signal(0);
-
-  showWicketForm = signal(false);
-  wicketFormDismissal = signal('');
-
-  event = signal('');
-
-  deliveryEvent(deliveryEv: DeliveryEvents) {
-    switch (deliveryEv) {
-      case DeliveryEvents.DotBall: {
+  matchEvents(matchEv: MatchEventTeams) {
+    console.log(matchEv);
+    let mEv = matchEv.event;
+    let data = matchEv.data;
+    let ht = this.returnHomeTeam()!;
+    let at = this.returnAwayTeam()!;
+    switch (mEv) {
+      case MatchEvents.TeamsSelected: {
+        this.setMatchSettings(data);
+        this.startNewGame();
         break;
       }
-      case DeliveryEvents.RunEvent: {
-        this.showRunForm.set(true);
-        break;
-      }
-      case DeliveryEvents.ExtraEvent: {
-        this.showExtraForm.set(true);
-        break;
-      }
-      case DeliveryEvents.WicketEvent: {
-        this.showWicketForm.set(true);
-        break;
-      }
-    }
-  }
-  runEvent(runEv: RunEvent) {
-    switch (runEv) {
-      case RunEvent.OneRun: {
-        break;
-      }
-      case RunEvent.TwoRuns: {
-        break;
-      }
-      case RunEvent.ThreeRuns: {
-        break;
-      }
-      case RunEvent.FourRuns: {
-        break;
-      }
-      case RunEvent.FiveRuns: {
-        break;
-      }
-      case RunEvent.SixRuns: {
-        break;
-      }
-    }
-    this.showRunForm.set(false);
-  }
-  extraEvent(extraEv: ExtraEvent) {
-    switch (extraEv) {
-      case ExtraEvent.Extra: {
-        break;
-      }
-      case ExtraEvent.Wides: {
-        break;
-      }
-      case ExtraEvent.Noball: {
-        break;
-      }
-      case ExtraEvent.NbRuns: {
-        break;
-      }
-      case ExtraEvent.Byes: {
-        break;
-      }
-      case ExtraEvent.Legbyes: {
-        break;
-      }
-    }
-    this.showExtraForm.set(false);
-  }
-  wicketEvent(wicketEv: WicketEvent) {
-    switch (wicketEv) {
-      case WicketEvent.Bowled: {
-        break;
-      }
-      case WicketEvent.Caught: {
-        break;
-      }
-      case WicketEvent.Lbw: {
-        break;
-      }
-      case WicketEvent.Stumped: {
-        break;
-      }
-      case WicketEvent.Runout: {
-        break;
-      }
-    }
-    this.showWicketForm.set(false);
-  }
-  matchEvents(matchEv: MatchEvents) {
-    let ht = this.returnHomeTeam();
-    let at = this.returnAwayTeam();
-    switch (matchEv) {
       case MatchEvents.MatchStart: {
         this.showTeamsUi.set(false);
         this.showCoinTossUi.set(true);
@@ -219,7 +175,7 @@ export class App implements OnInit {
           at.setTeamRole("Batting");
         }
         this.showRoleSelectionUi.set(false);
-        this.newInnings.set(true);
+        this.newInningsStarted.set(true);
         this.showSelectOpeningBatsForm.set(true);
         break;
       }
@@ -232,7 +188,7 @@ export class App implements OnInit {
           at.setTeamRole('Bowling');
         }
         this.showRoleSelectionUi.set(false);
-        this.newInnings.set(true);
+        this.newInningsStarted.set(true);
         this.showSelectOpeningBatsForm.set(true);
         break;
       }
@@ -249,6 +205,8 @@ export class App implements OnInit {
       case MatchEvents.BowlerChosen: {
         this.showSelectPlayerForm.set(false);
         this.showBtnUi.set(true);
+        let bowlerName = this.returnBowlingTeam().returnCurrentBowler();
+        this.currentOver().setBowler(bowlerName);
         break;
       }
       case MatchEvents.FielderChosen: {
@@ -256,246 +214,86 @@ export class App implements OnInit {
         this.showBtnUi.set(true);
         break;
       }
-      case MatchEvents.InningsComplete:
-      case MatchEvents.OverComplete:
-      case MatchEvents.DeliveryComplete:
-    }
-  }
-
-  /*eventOccured() {
-    let batTeam = this.returnBattingTeam();
-    let bowlTeam = this.returnBowlingTeam();
-    let bowler = this.returnBowlingTeam().returnCurrentBowler();
-    this.event.set('');
-    switch () {
-      case MatchEvents.DotBall: {
-        batTeam.returnOnStrikePlayer().returnBatProfile().addDeliveryFaced();
-        bowlTeam.teamDeliveryBowled();
-        bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().deliveryCompleted();
+      case MatchEvents.InningsComplete: {
+        this.showEndOverUi.set(false);
+        this.showEndInningUi.set(true);
         break;
       }
-      case MatchEvents.OneRun: {
-        let runsScored = 1;
-        batTeam.teamRunScored(runsScored);
-        batTeam.returnOnStrikePlayer().returnBatProfile().addDeliveryFaced();
-        batTeam.returnOnStrikePlayer().returnBatProfile().addRunScored(runsScored);
-        batTeam.strikeRotated();
-        bowlTeam.teamDeliveryBowled();
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        currBowler.runsConceded(runsScored);
-        break;
-      }
-      case MatchEvents.TwoRuns: {
-        let runsScored = 2;
-        batTeam.teamRunScored(runsScored);
-        batTeam.returnOnStrikePlayer().returnBatProfile().addDeliveryFaced();
-        batTeam.returnOnStrikePlayer().returnBatProfile().addRunScored(runsScored);
-        bowlTeam.teamDeliveryBowled();
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        currBowler.runsConceded(runsScored);
-        break;
-      }
-      case MatchEvents.ThreeRuns: {
-        let runsScored = 3;
-        batTeam.teamRunScored(runsScored);
-        batTeam.returnOnStrikePlayer().returnBatProfile().addDeliveryFaced();
-        batTeam.returnOnStrikePlayer().returnBatProfile().addRunScored(runsScored);
-        batTeam.strikeRotated();
-        bowlTeam.teamDeliveryBowled();
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        currBowler.runsConceded(runsScored);
-        break;
-      }
-      case MatchEvents.FourRuns: {
-        let runsScored = 4;
-        batTeam.teamRunScored(runsScored);
-        batTeam.returnOnStrikePlayer().returnBatProfile().addDeliveryFaced();
-        batTeam.returnOnStrikePlayer().returnBatProfile().addRunScored(runsScored);
-        bowlTeam.teamDeliveryBowled();
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        currBowler.runsConceded(runsScored);
-        break;
-      }
-      case MatchEvents.SixRuns: {
-        let runsScored = 6;
-        batTeam.teamRunScored(runsScored);
-        batTeam.returnOnStrikePlayer().returnBatProfile().addDeliveryFaced();
-        batTeam.returnOnStrikePlayer().returnBatProfile().addRunScored(runsScored);
-        bowlTeam.teamDeliveryBowled();
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        currBowler.runsConceded(runsScored);
-        break;
-      }
-      case MatchEvents.Extra: {
-        this.showExtraForm.set(true);
-        break;
-      }
-      case MatchEvents.Wides: {
-        let totalWides = this.extraFormTotal();
-        batTeam.teamRunScored(totalWides);
-        if (totalWides % 2 === 0) {
-          batTeam.strikeRotated();
-        }
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.wideBowled(totalWides);
-        this.showExtraForm.set(false);
-        break;
-      }
-      case MatchEvents.Noball: {
-        let nb = 1;
-        let additionalRuns = 0;
-        batTeam.teamRunScored(nb);
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        currBowler.noballBowled(additionalRuns);
-        break;
-      }
-      case MatchEvents.NbRuns: {
-        let nb = 1;
-        let runsScored = this.extraFormTotal();
-        batTeam.teamRunScored(nb + runsScored);
-        batTeam.returnOnStrikePlayer().returnBatProfile().addRunScored(runsScored);
-        if (runsScored % 2 !== 0) {
-          batTeam.strikeRotated();
-        }
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        currBowler.noballBowled(runsScored);
-        this.showExtraForm.set(false);
-        break;
-      }
-      case MatchEvents.Byes: {
-        let totalByes = this.extraFormTotal();
-
-        batTeam.teamRunScored(totalByes);
-        batTeam.returnOnStrikePlayer().returnBatProfile().addDeliveryFaced();
-        if (totalByes % 2 !== 0) {
-          batTeam.strikeRotated();
-        }
-        bowlTeam.teamDeliveryBowled();
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        this.showExtraForm.set(false);
-        break;
-      }
-      case MatchEvents.Legbyes: {
-        let totalLegbyes = this.extraFormTotal();
-        batTeam.teamRunScored(totalLegbyes);
-        batTeam.returnOnStrikePlayer().returnBatProfile().addDeliveryFaced();
-        if (totalLegbyes % 2 !== 0) {
-          batTeam.strikeRotated();
-        }
-        bowlTeam.teamDeliveryBowled();
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        this.showExtraForm.set(false);
-        break;
-      }
-      case MatchEvents.Bowled: {
-        batTeam.teamWicketDismissal();
-        bowlTeam.teamDeliveryBowled();
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        currBowler.wicketTaken();
-        break;
-      }
-      case MatchEvents.Caught: {
-        batTeam.teamWicketDismissal();
-        bowlTeam.teamDeliveryBowled();
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        currBowler.wicketTaken();
-        break;
-      }
-      case MatchEvents.Lbw: {
-        batTeam.teamWicketDismissal();
-        bowlTeam.teamDeliveryBowled();
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        currBowler.wicketTaken();
-        break;
-      }
-      case MatchEvents.Stumped: {
-        batTeam.teamWicketDismissal();
-        bowlTeam.teamDeliveryBowled();
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        currBowler.wicketTaken();
-        break;
-      }
-      case MatchEvents.Runout: {
-        batTeam.teamWicketDismissal();
-        bowlTeam.teamDeliveryBowled();
-        let currBowler = bowlTeam.returnPlayerProfile(bowler).returnBowlProfile();
-        currBowler.deliveryCompleted();
-        break;
-      }
-      case MatchEvents.MatchStart: {
-        this.showTeamsUi.set(false);
-        this.showCoinTossUi.set(true);
-        break;
-      }
-      case MatchEvents.HomeCoinWin: {
-
-        this.returnHomeTeam().setTossResult(true);
-        this.returnAwayTeam().setTossResult(false);
-
-        this.showCoinTossUi.set(false);
-        this.showRoleSelectionUi.set(true);
-        break;
-      }
-      case MatchEvents.AwayCoinWin: {
-        this.returnHomeTeam().setTossResult(false);
-        this.returnAwayTeam().setTossResult(true);
-        this.showCoinTossUi.set(false);
-        this.showRoleSelectionUi.set(true);
-        break;
-      }
-      case MatchEvents.RoleBat: {
-        if (this.returnHomeTeam().returnTossResult()) {
-          this.returnHomeTeam().setTeamRole(MatchEvents.RoleBat);
-          this.returnAwayTeam().setTeamRole(MatchEvents.RoleBowl);
+      case MatchEvents.NewInning: {
+        this.showEndInningUi.set(false);
+        let ht = this.returnHomeTeam()!;
+        let at = this.returnAwayTeam()!;
+        if (ht.returnTeamRole() === 'Batting') {
+          ht.setTeamRole('Bowling');
+          at.setTeamRole('Batting');
         } else {
-          this.returnHomeTeam().setTeamRole(MatchEvents.RoleBowl);
-          this.returnAwayTeam().setTeamRole(MatchEvents.RoleBat);
+          ht.setTeamRole('Batting');
+          at.setTeamRole('Bowling');
         }
-        this.showRoleSelectionUi.set(false);
-        this.newInnings.set(true);
+        this.currentOver.set(new OverClass());
+        this.currentInnings.set(new InningsClass(2));
         this.showSelectOpeningBatsForm.set(true);
-        break;
-      }
-      case MatchEvents.RoleBowl: {
-        if (this.returnHomeTeam().returnTossResult()) {
-          this.returnHomeTeam().setTeamRole(MatchEvents.RoleBowl);
-          this.returnAwayTeam().setTeamRole(MatchEvents.RoleBat);
-        } else {
-          this.returnHomeTeam().setTeamRole(MatchEvents.RoleBat);
-          this.returnAwayTeam().setTeamRole(MatchEvents.RoleBowl);
-        }
-        this.showRoleSelectionUi.set(false);
-        this.newInnings.set(true);
-        this.showSelectOpeningBatsForm.set(true);
-        break;
-      }
-      case MatchEvents.OpenersChosen: {
-        this.showSelectOpeningBatsForm.set(false);
-        this.showSelectPlayerForm.set(true);
-        break;
-      }
-      case MatchEvents.PlayerChosen: {
-        this.showSelectPlayerForm.set(false);
-        this.showBtnUi.set(true);
         break;
       }
       case MatchEvents.OverComplete: {
+        this.currentInnings().overCompleted();
+        let bowlName = this.returnBowlingTeam().returnCurrentBowler();
+        this.returnBowlingTeam().returnPlayerProfile(bowlName).returnBowlProfile().overBowled();
+        this.showEndOverUi.set(true);
+        break;
+      }
+      case MatchEvents.DeliveryComplete: {
+        break;
+      }
+      case MatchEvents.NewOver: {
+        this.showEndOverUi.set(false);
+        this.formSelect.set('Bowl');
+        this.showSelectPlayerForm.set(true);
+        this.currentOver.set(new OverClass());
         break;
       }
     }
-  }*/
+  }
+  deliveryEvent(delivery: DeliveryType) {
+    switch (delivery.event) {
+      case DeliveryEvents.Default: {
+        break;
+      }
+      case DeliveryEvents.DotBall: {
+        break;
+      }
+      case DeliveryEvents.Runs: {
+        this.showRunForm.set(true);
+        break;
+      }
+      case DeliveryEvents.Wide: {
+        break;
+      }
+      case DeliveryEvents.Noball: {
+        break;
+      }
+      case DeliveryEvents.Byes: {
+        break;
+      }
+      case DeliveryEvents.Legbyes: {
+        break;
+      }
+      case DeliveryEvents.Bowled: {
+        break;
+      }
+      case DeliveryEvents.Caught: {
+        break;
+      }
+      case DeliveryEvents.Lbw: {
+        break;
+      }
+      case DeliveryEvents.Stumped: {
+        break;
+      }
+      case DeliveryEvents.Runout: {
+        break;
+      }
+    }
+  }
 }
 

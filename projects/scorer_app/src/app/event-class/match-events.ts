@@ -1,4 +1,5 @@
 export enum MatchEvents {
+  TeamsSelected = "TeamsSelected",
   MatchStart = "MatchStart",
   HomeCoinWin = "HomeCoinWin",
   AwayCoinWin = "AwayCoinWin",
@@ -11,6 +12,10 @@ export enum MatchEvents {
   FielderChosen = "FielderChosen",
 
   InningsComplete = "InningsComplete",
+  NewInning = "NewInning",
   OverComplete = "OverComplete",
-  DeliveryComplete = "DeliveryComplete"
+  NewOver = "NewOver",
+  DeliveryComplete = "DeliveryComplete",
+
+  ShowRunForm = "ShowRunForm",
 }

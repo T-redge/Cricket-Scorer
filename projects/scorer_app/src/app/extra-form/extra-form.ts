@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Output, signal } from '@angular/core';
-import { ExtraEvent } from '../event-class/delivery-events';
+import { Component, EventEmitter, input, Output, signal } from '@angular/core';
+import { DeliveryEvents, DeliveryType } from '../event-class/delivery-events';
 
 
 @Component({
@@ -9,59 +9,69 @@ import { ExtraEvent } from '../event-class/delivery-events';
   styleUrl: './extra-form.css',
 })
 export class ExtraForm {
-  @Output() wideEv: EventEmitter<ExtraEvent> = new EventEmitter();
-  @Output() nbEv: EventEmitter<ExtraEvent> = new EventEmitter();
-  @Output() byeEv: EventEmitter<ExtraEvent> = new EventEmitter();
-  @Output() legbyeEv: EventEmitter<ExtraEvent> = new EventEmitter();
+  batter = input('');
+  bowler = input('');
 
-  @Output() totalExtras: EventEmitter<number> = new EventEmitter();
+  @Output() extraEvent: EventEmitter<DeliveryType> = new EventEmitter();
 
-  formLabel = signal('');
+  formLabel = signal(DeliveryEvents.Default);
   showTotalConcededForm = signal(false);
 
   numExtras = signal(1);
 
   wideBowled() {
-    this.formLabel.set('Wide');
+    this.formLabel.set(DeliveryEvents.Wide);
     this.showTotalConcededForm.set(true);
   }
   nbBowled() {
-    this.formLabel.set('Noball');
+    this.formLabel.set(DeliveryEvents.Noball);
     this.numExtras.set(0);
     this.showTotalConcededForm.set(true);
 
   }
   byesBowled() {
-    this.formLabel.set('Byes');
+    this.formLabel.set(DeliveryEvents.Byes);
     this.showTotalConcededForm.set(true);
 
   }
   legbyesBowled() {
-    this.formLabel.set('Legbyes');
+    this.formLabel.set(DeliveryEvents.Legbyes);
     this.showTotalConcededForm.set(true);
 
   }
-
   incrementExtras() {
-    if (this.formLabel() === 'Wide') {
-      if (this.numExtras() < 5) {
-        this.numExtras.update(curr => curr + 1);
-      }
-    } else if (this.formLabel() === 'Noball') {
-      if (this.numExtras() < 6) {
-        this.numExtras.update(curr => curr + 1);
-        if (this.numExtras() === 5) {
+    switch (this.formLabel()) {
+      case DeliveryEvents.Wide: {
+        if (this.numExtras() < 5) {
           this.numExtras.update(curr => curr + 1);
         }
+        break;
       }
-    } else {
-      if (this.numExtras() < 4) {
-        this.numExtras.update(curr => curr + 1);
+      case DeliveryEvents.Noball: {
+        if (this.numExtras() < 6) {
+          this.numExtras.update(curr => curr + 1);
+          if (this.numExtras() === 5) {
+            this.numExtras.update(curr => curr + 1);
+          }
+        }
+        break;
+      }
+      case DeliveryEvents.Byes: {
+        if (this.numExtras() < 4) {
+          this.numExtras.update(curr => curr + 1);
+        }
+        break;
+      }
+      case DeliveryEvents.Legbyes: {
+        if (this.numExtras() < 4) {
+          this.numExtras.update(curr => curr + 1);
+        }
+        break;
       }
     }
   }
   decrementExtras() {
-    if (this.formLabel() === 'Noball') {
+    if (this.formLabel() === DeliveryEvents.Noball) {
       if (this.numExtras() > 0) {
         this.numExtras.update(curr => curr - 1);
         if (this.numExtras() === 5) {
@@ -73,26 +83,20 @@ export class ExtraForm {
     }
   }
   confirmExtrasAmount() {
-    if (this.formLabel() === 'Wide') {
-      this.totalExtras.emit(this.numExtras());
-      this.wideEv.emit(ExtraEvent.Wides)
-    } else if (this.formLabel() === 'Noball') {
-      this.totalExtras.emit(this.numExtras());
-      this.nbEv.emit(ExtraEvent.NbRuns);
-    } else if (this.formLabel() === 'Byes') {
-      this.totalExtras.emit(this.numExtras());
-      this.byeEv.emit(ExtraEvent.Byes);
-    } else {
-      this.totalExtras.emit(this.numExtras());
-      this.legbyeEv.emit(ExtraEvent.Legbyes);
-    }
+    let batName = this.batter();
+    let bowlName = this.bowler();
+    let dEv = this.formLabel();
+    let runs = this.numExtras();
+
+    let delivery: DeliveryType = { batter: batName, bowler: bowlName, event: dEv, totalRuns: runs };
+    this.extraEvent.emit(delivery);
   }
   returnTitleText(): string {
-    if (this.formLabel() === "Wide") {
+    if (this.formLabel() === DeliveryEvents.Wide) {
       return "wides";
-    } else if (this.formLabel() === "Noball") {
+    } else if (this.formLabel() === DeliveryEvents.Noball) {
       return "runs scored";
-    } else if (this.formLabel() === "Byes") {
+    } else if (this.formLabel() === DeliveryEvents.Byes) {
       return "byes";
     } else {
       return "legbyes"

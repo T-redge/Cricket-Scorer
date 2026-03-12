@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<div id="select">
+  <h4>Match Settings</h4>
+  <form [formGroup]="selectTeams" (change)="checkHomeAway()">
+    <div id="HomeTeam">
+      <label for="ht">Home Team</label>
+      <select id="ht" formControlName="selectHomeTeam">
+      @for (teams of teamNames; track $index;) {
+        <option value="{{teams}}">{{teams}}</option>
+      }
+      </select>
+    </div>
+    <div id="AwayTeam">
+      <label for="at">Away Team</label>
+      <select id="at" formControlName="selectAwayTeam">
+      @for (teams of teamNames; track $index) {
+        <option value="{{teams}}">{{teams}}</option>
+      }
+      </select>
+    </div>
+    <div id="OverLimit">
+      <label for="Over">Max Overs</label>
+      <select id="Over" formControlName="setMaxOvers">
+      @for (overs of overLimit; track $index) {
+        <option value="{{overs}}">{{overs}}</option>
+      }
+      </select>
+    </div>
+  </form>
+  <button [disabled]="buttonDisabled()" (click)="submitTeams()">Confirm Teams</button>
+</div>
+</html>

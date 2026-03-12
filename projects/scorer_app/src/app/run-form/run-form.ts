@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Output, signal } from '@angular/core';
-import { RunEvent } from '../event-class/delivery-events';
+import { Component, EventEmitter, input, InputSignal, Output, signal } from '@angular/core';
+import { DeliveryEvents, DeliveryType } from '../event-class/delivery-events';
 
 @Component({
   selector: 'app-run-form',
@@ -8,9 +8,12 @@ import { RunEvent } from '../event-class/delivery-events';
   styleUrl: './run-form.css',
 })
 export class RunForm {
+  batter = input('');
+  bowler = input('');
+
   runsScored = signal(1);
 
-  @Output() totalRuns: EventEmitter<RunEvent> = new EventEmitter();
+  @Output() emitRunEvent: EventEmitter<DeliveryType> = new EventEmitter();
 
   incrementRuns() {
     if (this.runsScored() < 6) {
@@ -23,32 +26,12 @@ export class RunForm {
     }
   }
   confirmRuns() {
-    switch (this.runsScored()) {
-      case 1: {
-        this.totalRuns.emit(RunEvent.OneRun);
-        break;
-      }
-      case 2: {
-        this.totalRuns.emit(RunEvent.TwoRuns);
-        break;
-      }
-      case 3: {
-        this.totalRuns.emit(RunEvent.ThreeRuns);
-        break;
-      }
-      case 4: {
-        this.totalRuns.emit(RunEvent.FourRuns);
-        break;
-      }
-      case 5: {
-        this.totalRuns.emit(RunEvent.FiveRuns);
-        break;
-      }
-      case 6: {
-        this.totalRuns.emit(RunEvent.SixRuns);
-        break;
-      }
-    }
-  }
+    let batName = this.batter();
+    let bowlName = this.bowler();
+    let dEv = DeliveryEvents.Runs;
+    let runs = this.runsScored();
 
+    let delivery: DeliveryType = { batter: batName, bowler: bowlName, event: dEv, totalRuns: runs };
+    this.emitRunEvent.emit(delivery);
+  }
 }

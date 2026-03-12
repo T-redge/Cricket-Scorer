@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<div id="EndInning">
+  <h4>End of {{returnBatTeamName()}} Inning</h4>
+  <table>
+    <tr>
+      <th id="Name">Batting Team</th>
+      <th>Score</th>
+      <th>Overs</th>
+    </tr>
+    <tr>
+      <td id="Name">{{returnBatTeamName()}}</td>
+      <td>{{returnBatTeamScore()}}</td>
+      <td>{{returnOversCompleted()}}</td>
+    </tr>
+    <tr>
+      <th id="Name">Bowling Team</th>
+      <th></th>
+      <th>Figures</th>
+    </tr>
+      @for (stat of returnBowlTeamBowlers(); track $index) {
+        <tr>
+          <td id="Name">{{stat[0]}}</td>
+          <td></td>
+          <td>{{stat[1]}}</td>
+        </tr>
+      }
+  </table>
+  <button (click)="emitNewInningEvent()">New Inning</button>
+</div>
+</html>

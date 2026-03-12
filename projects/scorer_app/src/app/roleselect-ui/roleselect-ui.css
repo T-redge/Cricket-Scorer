@@ -1,0 +1,22 @@
+div {
+  border: solid 2.5px black;
+  background: white;
+  display: grid;
+  padding: 10px;
+}
+h4 {
+  text-align: center;
+  grid-column: 1 /span 2;
+  margin: 0 0 10px 0;
+  text-decoration: underline;
+}
+#Bat {
+  grid-column: 1;
+  padding: 10px;
+  margin-right: 5px;
+}
+#Bowl {
+  grid-column: 2;
+  padding: 10px;
+  margin-left: 5px;
+}

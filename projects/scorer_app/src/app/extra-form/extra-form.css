@@ -1,9 +1,9 @@
 div {
   border: solid 2.5px black;
-  width: 472px;
-  height: 87px;
   display: grid;
   background: white;
+  padding: 10px;
+  grid-column-gap: 10px;
 }
 #ExtraSelect {
   grid-template-columns: repeat(4,minmax(0,1fr));
@@ -11,18 +11,15 @@ div {
 #ExtraRuns {
   grid-template-columns: repeat(3,minmax(0,1fr));
 }
-#type {
-  margin: 0 5px 5px 5px;
+button {
+  padding: 10px;
 }
 h4 {
   grid-row: 1;
   grid-column: 1 /span 4;
   text-align: center;
-  margin: 5px 0 0 0;
   text-decoration: underline;
-}
-label {
-  text-align: center;
+  margin: 0 0 10px 0;
 }
 #Dec {
   grid-row: 2;
@@ -33,10 +30,7 @@ label {
   grid-column: 3;
 }
 #Confirm {
-  grid-row: 3;
+  grid-row: 2;
   grid-column: 2;
-}
-#Dec, #Inc, #Confirm {
-  margin: 0px 5px 5px 5px;
 }
 

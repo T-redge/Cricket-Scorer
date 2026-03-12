@@ -2,6 +2,7 @@ import { signal } from "@angular/core";
 import { PlayerClass } from "../player-class/player-class";
 
 export class Team {
+  private teamName = signal('');
   private tossWon = signal(false);
   private teamRole = signal('');
   private playerMap: Map<string, PlayerClass> = new Map;
@@ -17,7 +18,12 @@ export class Team {
 
   private currentBowler = signal('');
   private lastBowler = signal('');
-
+  setTeamName(name: string) {
+    this.teamName.set(name);
+  }
+  returnTeamName(): string {
+    return this.teamName();
+  }
   setCurrentBowler(name: string) {
     this.currentBowler.set(name);
   }
@@ -106,6 +112,17 @@ export class Team {
   returnPlayerProfile(name: string): PlayerClass {
     return this.playerMap.get(name)!;
   }
+  returnOnStrikePlayerName(): string {
+    let b1 = this.batterOne();
+    let b2 = this.batterTwo();
+
+    if (this.returnPlayerProfile(b1).batProfile.returnOnstrike()) {
+      return b1;
+    } else {
+      return b2;
+    }
+  }
+
   returnOnStrikePlayer(): PlayerClass {
     let b1 = this.batterOne();
     let b2 = this.batterTwo();
@@ -115,5 +132,16 @@ export class Team {
     } else {
       return this.returnPlayerProfile(b2);
     }
+  }
+  returnBowlerListFigures(): Array<[string, string]> {
+    let list: Array<[string, string]> = [];
+    this.playerMap.forEach((pProfile, pName) => {
+      let stat = pProfile.returnBowlProfile();
+      let name = pName;
+      if (stat.overs() > 0) {
+        list.push([name, stat.returnScore()]);
+      }
+    });
+    return list;
   }
 }

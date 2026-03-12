@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<div id="EndOver">
+  <h4>End of the Over</h4>
+  <table>
+    <tr>
+      <th id="Name">Bowler</th>
+      <th>Runs</th>
+      <th>Wickets</th>
+      <th>Extras</th>
+    </tr>
+    <tr>
+      <td id="Name">{{returnBowlerName()}}</td>
+      <td>{{returnRunsScored()}}</td>
+      <td>{{returnWicketsTaken()}}</td>
+      <td>{{returnExtrasConceded()}}</td>
+    </tr>
+  </table>
+  @if (checkInningEnd()) {
+  <button (click)="emitEndInning()">End Inning</button>
+  } @else {
+  <button (click)="emitNewOver()">New Over</button>
+  }
+</div>
+
+</html>
