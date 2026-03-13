@@ -17,24 +17,44 @@
       <app-cointoss-ui
       [homeTeamName]="homeTeamName()"
       [awayTeamName]="awayTeamName()"
+      (tossCompleted)="matchEvents($event)"
       />
     }
     @if (showRoleSelectionUi()) {
       <app-roleselect-ui
       [homeTeam]="returnHomeTeam()"
       [awayTeam]="returnAwayTeam()"
+      (selectRole)="matchEvents($event)"
+      />
+    }
+    @if (showSelectOpeningBatsForm()) {
+        <app-select-openers-form
+        [homeTeam]="returnHomeTeam()"
+        [awayTeam]="returnAwayTeam()"
+        (openingBatters)="matchEvents($event)"
       />
     }
     @if (newInningsStarted()) {
-      <app-scorer-ui />
-      <app-commentary-ui />
-      @if (showSelectOpeningBatsForm()) {
-        <app-select-openers-form />
-      }
+      <app-scorer-ui
+      [homeTeam]="returnHomeTeam()"
+      [awayTeam]="returnAwayTeam()"
+      [overCount]="currentInnings()"
+      [deliveryCount]="currentOver()"
+      />
       @if (showSelectPlayerForm()) {
-        <app-select-player-form />
+        <app-select-player-form
+        [homeTeam]="returnHomeTeam()"
+        [awayTeam]="returnAwayTeam()"
+        [formLabel]="formSelect()"
+        (eventPlayerChosen)="matchEvents($event)"
+        />
       }
-      <app-event-buttons-ui />
+      <app-event-buttons-ui
+      [over]="currentOver()"
+      [inning]="currentInnings()"
+      [batTeam]="returnBattingTeam()"
+      (deliveryEv)="matchEvents($event)"
+      />
       @if (showEndOverUi()) {
         <app-end-over-ui />
       }

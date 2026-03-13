@@ -1,12 +1,12 @@
-import { Component, EventEmitter, Output, signal, WritableSignal, type OnInit } from '@angular/core';
-import { load_teamone_file, load_teamtwo_file, initRustWasm } from 'wasm-scorer';
+import { Component, signal, WritableSignal, type OnInit } from '@angular/core';
+import { load_teamfile, initRustWasm } from 'wasm-scorer';
 import { TeamlistUi } from './teamlist-ui/teamlist-ui';
-import { CointossUi } from './cointoss-ui/cointoss-ui';
-import { RoleselectUi } from './roleselect-ui/roleselect-ui';
+import { CointossUi, TossResult } from './cointoss-ui/cointoss-ui';
+import { RoleChoice, Roles, RoleselectUi } from './roleselect-ui/roleselect-ui';
 import { Team } from './team-class/team-class';
 import { ScorerUi } from './scorer-ui/scorer-ui';
 import { SelectPlayerForm } from './select-player-form/select-player-form';
-import { SelectOpenersForm } from './select-openers-form/select-openers-form';
+import { OpeningBats, SelectOpenersForm } from './select-openers-form/select-openers-form';
 import { ExtraForm } from './extra-form/extra-form';
 import { EventButtonsUi } from './event-buttons-ui/event-buttons-ui';
 import { DeliveryEvents, DeliveryType } from './event-class/delivery-events';
@@ -18,13 +18,12 @@ import { InningsClass } from './innings-class/innings-class';
 import { OverClass } from './over-class/over-class';
 import { EndOverUi } from './end-over-ui/end-over-ui';
 import { EndInningUi } from './end-inning-ui/end-inning-ui';
-import { CommentaryUi } from './commentary-ui/commentary-ui';
 import { MatchEventTeams, MatchSettingsForm, MatchSetting } from './match-settings-form/match-settings-form';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [MatchSettingsForm, CommentaryUi, EndInningUi, EndOverUi, WicketForm, RunForm, EventButtonsUi, TeamlistUi, CointossUi, RoleselectUi, ScorerUi, SelectPlayerForm, SelectOpenersForm, ExtraForm],
+  imports: [MatchSettingsForm, EndInningUi, EndOverUi, WicketForm, RunForm, EventButtonsUi, TeamlistUi, CointossUi, RoleselectUi, ScorerUi, SelectPlayerForm, SelectOpenersForm, ExtraForm],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -55,7 +54,7 @@ export class App implements OnInit {
   showBtnUi = signal(false);
   showSelectOpeningBatsForm = signal(false);
   showSelectPlayerForm = signal(false);
-  formSelect = signal('Bowl');
+  formSelect: WritableSignal<Roles> = signal(Roles.Default);
   showExtraForm = signal(false);
   extraFormTotal = signal(0);
   showEndOverUi = signal(false);
@@ -75,12 +74,14 @@ export class App implements OnInit {
     this.maxOvers.set(ov);
   }
   loadTeams() {
-    this.teamsMap().set(this.homeTeamName(), new Team);
-    this.teamsMap().set(this.awayTeamName(), new Team);
-    this.teamsMap().get(this.homeTeamName())!.setTeamName(this.homeTeamName());
-    this.teamsMap().get(this.awayTeamName())!.setTeamName(this.awayTeamName());
-    this.teamsMap().get(this.homeTeamName())!.loadPlayers(load_teamone_file());
-    this.teamsMap().get(this.awayTeamName())!.loadPlayers(load_teamtwo_file());
+    let htName = this.homeTeamName();
+    let atName = this.awayTeamName();
+    this.teamsMap().set(htName, new Team);
+    this.teamsMap().set(atName, new Team);
+    this.teamsMap().get(htName)!.setTeamName(htName);
+    this.teamsMap().get(atName)!.setTeamName(atName);
+    this.teamsMap().get(htName)!.loadPlayers(load_teamfile(htName));
+    this.teamsMap().get(atName)!.loadPlayers(load_teamfile(atName));
   }
   startNewGame() {
     this.loadTeams();
@@ -94,7 +95,7 @@ export class App implements OnInit {
   }
   receivePlayerName(nameEv: string) {
     let bowlTeam = this.returnBowlingTeam();
-    if (this.formSelect() === 'Bowl') {
+    if (this.formSelect() === Roles.Bowl) {
       bowlTeam.setLastBowler(bowlTeam.returnCurrentBowler());
       bowlTeam.setCurrentBowler(nameEv);
     }
@@ -109,7 +110,7 @@ export class App implements OnInit {
   }
   returnBattingTeam(): Team {
     let ht = this.returnHomeTeam()!.returnTeamRole();
-    if (ht === 'Batting') {
+    if (ht === Roles.Bat) {
       return this.returnHomeTeam()!;
     } else {
       return this.returnAwayTeam();
@@ -117,10 +118,28 @@ export class App implements OnInit {
   }
   returnBowlingTeam(): Team {
     let ht = this.returnHomeTeam()!.returnTeamRole();
-    if (ht === 'Bowling') {
+    if (ht === Roles.Bowl) {
       return this.returnHomeTeam()!;
     } else {
       return this.returnAwayTeam();
+    }
+  }
+  returnTossWinner(): Team {
+    let ht = this.returnHomeTeam();
+    let at = this.returnAwayTeam();
+    if (ht.returnTossResult()) {
+      return ht;
+    } else {
+      return at;
+    }
+  }
+  returnTossLoser(): Team {
+    let ht = this.returnHomeTeam();
+    let at = this.returnAwayTeam();
+    if (ht.returnTossResult()) {
+      return at;
+    } else {
+      return ht;
     }
   }
   returnCurrentOver(): OverClass {
@@ -138,11 +157,11 @@ export class App implements OnInit {
     return extraEv;
   }
   matchEvents(matchEv: MatchEventTeams) {
-    console.log(matchEv);
     let mEv = matchEv.event;
     let data = matchEv.data;
     let ht = this.returnHomeTeam()!;
     let at = this.returnAwayTeam()!;
+    let ov = this.returnCurrentOver();
     switch (mEv) {
       case MatchEvents.TeamsSelected: {
         this.setMatchSettings(data);
@@ -154,46 +173,32 @@ export class App implements OnInit {
         this.showCoinTossUi.set(true);
         break;
       }
-      case MatchEvents.HomeCoinWin: {
-        ht.setTossResult(true);
+      case MatchEvents.TossCompleted: {
+        let result: TossResult = data;
+        ht.setTossResult(result.home);
+        at.setTossResult(result.away);
         this.showCoinTossUi.set(false);
         this.showRoleSelectionUi.set(true);
         break;
       }
-      case MatchEvents.AwayCoinWin: {
-        at.setTossResult(true);
-        this.showCoinTossUi.set(false);
-        this.showRoleSelectionUi.set(true);
-        break;
-      }
-      case MatchEvents.RoleBat: {
-        if (ht.returnTossResult()) {
-          ht.setTeamRole("Batting");
-          at.setTeamRole("Bowling");
-        } else {
-          ht.setTeamRole("Bowling");
-          at.setTeamRole("Batting");
-        }
+      case MatchEvents.RoleSelected: {
+        let winner = this.returnTossWinner();
+        let loser = this.returnTossLoser();
+        let choice: RoleChoice = data;
+        winner.setTeamRole(choice.win);
+        loser.setTeamRole(choice.loss);
         this.showRoleSelectionUi.set(false);
-        this.newInningsStarted.set(true);
-        this.showSelectOpeningBatsForm.set(true);
-        break;
-      }
-      case MatchEvents.RoleBowl: {
-        if (ht.returnTossResult()) {
-          ht.setTeamRole('Bowling');
-          at.setTeamRole('Batting');
-        } else {
-          ht.setTeamRole('Batting');
-          at.setTeamRole('Bowling');
-        }
-        this.showRoleSelectionUi.set(false);
-        this.newInningsStarted.set(true);
         this.showSelectOpeningBatsForm.set(true);
         break;
       }
       case MatchEvents.OpenersChosen: {
+        let selection: OpeningBats = data;
+        let batTeam = this.returnBattingTeam();
+        batTeam.setBatterOne(selection.b1);
+        batTeam.setBatterTwo(selection.b2);
         this.showSelectOpeningBatsForm.set(false);
+        this.newInningsStarted.set(true);
+        this.formSelect.set(Roles.Bowl);
         this.showSelectPlayerForm.set(true);
         break;
       }
@@ -203,10 +208,16 @@ export class App implements OnInit {
         break;
       }
       case MatchEvents.BowlerChosen: {
+        let selection: string = data;
+        let bowlTeam = this.returnBowlingTeam();
+        if (bowlTeam.returnCurrentBowler() !== '') {
+          let previous = bowlTeam.returnCurrentBowler();
+          bowlTeam.setLastBowler(previous);
+        }
+        bowlTeam.setCurrentBowler(selection);
+        ov.setBowler(selection);
         this.showSelectPlayerForm.set(false);
         this.showBtnUi.set(true);
-        let bowlerName = this.returnBowlingTeam().returnCurrentBowler();
-        this.currentOver().setBowler(bowlerName);
         break;
       }
       case MatchEvents.FielderChosen: {
@@ -221,17 +232,8 @@ export class App implements OnInit {
       }
       case MatchEvents.NewInning: {
         this.showEndInningUi.set(false);
-        let ht = this.returnHomeTeam()!;
-        let at = this.returnAwayTeam()!;
-        if (ht.returnTeamRole() === 'Batting') {
-          ht.setTeamRole('Bowling');
-          at.setTeamRole('Batting');
-        } else {
-          ht.setTeamRole('Batting');
-          at.setTeamRole('Bowling');
-        }
         this.currentOver.set(new OverClass());
-        this.currentInnings.set(new InningsClass(2));
+        this.currentInnings.set(new InningsClass(this.maxOvers()));
         this.showSelectOpeningBatsForm.set(true);
         break;
       }
@@ -243,11 +245,13 @@ export class App implements OnInit {
         break;
       }
       case MatchEvents.DeliveryComplete: {
+        let dEv: DeliveryType = data;
+        this.deliveryEvent(dEv);
         break;
       }
       case MatchEvents.NewOver: {
         this.showEndOverUi.set(false);
-        this.formSelect.set('Bowl');
+        this.formSelect.set(Roles.Bowl);
         this.showSelectPlayerForm.set(true);
         this.currentOver.set(new OverClass());
         break;
@@ -255,11 +259,23 @@ export class App implements OnInit {
     }
   }
   deliveryEvent(delivery: DeliveryType) {
-    switch (delivery.event) {
+    console.log(delivery);
+    let event = delivery.event;
+    let batter = delivery.batter;
+    let bowler = delivery.bowler;
+    let runs = delivery.totalRuns;
+    let ov = this.returnCurrentOver();
+    let batTeam = this.returnBattingTeam();
+    let bowlTeam = this.returnBowlingTeam();
+    switch (event) {
       case DeliveryEvents.Default: {
         break;
       }
       case DeliveryEvents.DotBall: {
+        ov.runsScored(runs);
+        ov.enterDeliveryRecord(delivery);
+        batTeam.returnPlayerProfile(batter).returnBatProfile().addRunScored(runs);
+        bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().runsConceded(runs);
         break;
       }
       case DeliveryEvents.Runs: {

@@ -1,8 +1,17 @@
-import { Component, EventEmitter, inject, input, InputSignal, Output } from '@angular/core';
-import { App } from '../app';
-import { MatchEvents } from '../event-class/match-events';
+import { Component, EventEmitter, input, InputSignal, Output } from '@angular/core';
 import { Team } from '../team-class/team-class';
-
+import { MatchEventTeams } from '../match-settings-form/match-settings-form';
+import { MatchEvents } from '../event-class/match-events';
+export enum Roles {
+  Default = "Default",
+  Bat = "Bat",
+  Bowl = "Bowl",
+  Field = "Field",
+}
+export type RoleChoice = {
+  win: Roles,
+  loss: Roles,
+}
 @Component({
   selector: 'app-roleselect-ui',
   imports: [],
@@ -13,11 +22,31 @@ export class RoleselectUi {
   homeTeam: InputSignal<Team | undefined> = input();
   awayTeam: InputSignal<Team | undefined> = input();
 
+  tossDecision: RoleChoice = { win: Roles.Default, loss: Roles.Default };
+
+  @Output() selectRole: EventEmitter<MatchEventTeams> = new EventEmitter();
+
   roleBatSelect() {
-    //this.roleBat.emit(MatchEvents.RoleBat);
+    let data: RoleChoice = {
+      win: Roles.Bat,
+      loss: Roles.Bowl,
+    }
+    let event: MatchEventTeams = {
+      event: MatchEvents.RoleSelected,
+      data: data,
+    }
+    this.selectRole.emit(event);
   }
   roleBowlSelect() {
-    //this.roleBowl.emit(MatchEvents.RoleBowl);
+    let data: RoleChoice = {
+      win: Roles.Bowl,
+      loss: Roles.Bat,
+    }
+    let event: MatchEventTeams = {
+      event: MatchEvents.RoleSelected,
+      data: data,
+    }
+    this.selectRole.emit(event);
   }
   returnTossWinner(): string {
     let ht = this.homeTeam();

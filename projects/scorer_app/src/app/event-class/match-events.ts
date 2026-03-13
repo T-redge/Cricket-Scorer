@@ -1,10 +1,8 @@
 export enum MatchEvents {
   TeamsSelected = "TeamsSelected",
   MatchStart = "MatchStart",
-  HomeCoinWin = "HomeCoinWin",
-  AwayCoinWin = "AwayCoinWin",
-  RoleBat = "Batting",
-  RoleBowl = "Bowling",
+  TossCompleted = "TossCompleted",
+  RoleSelected = "RoleSelected",
 
   OpenersChosen = "OpenerChosen",
   BatterChosen = "BatterChosen",

@@ -6,6 +6,7 @@ export class BatterClass {
   deliveries = signal(0);
 
   addRunScored(runs: number) {
+    this.addDeliveryFaced();
     this.runs.update(curr => curr + runs);
   }
   addDeliveryFaced() {

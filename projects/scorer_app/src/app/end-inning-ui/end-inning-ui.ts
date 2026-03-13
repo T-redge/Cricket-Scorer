@@ -3,6 +3,7 @@ import { Team } from '../team-class/team-class';
 import { InningsClass } from '../innings-class/innings-class';
 import { App } from '../app';
 import { MatchEvents } from '../event-class/match-events';
+import { Roles } from '../roleselect-ui/roleselect-ui';
 
 @Component({
   selector: 'app-end-inning-ui',
@@ -22,7 +23,7 @@ export class EndInningUi {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === 'Batting') {
+      if (ht.returnTeamRole() === Roles.Bat) {
         return ht;
       } else {
         return at;
@@ -35,7 +36,7 @@ export class EndInningUi {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === 'Bowling') {
+      if (ht.returnTeamRole() === Roles.Bowl) {
         return ht;
       } else {
         return at;

@@ -1,9 +1,9 @@
-import { Component, EventEmitter, inject, input, InputSignal, Output, signal } from '@angular/core';
-import { App } from '../app';
+import { Component, EventEmitter, input, InputSignal, Output, signal } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatchEvents } from '../event-class/match-events';
 import { Team } from '../team-class/team-class';
 import { MatchEventTeams } from '../match-settings-form/match-settings-form';
+import { Roles } from '../roleselect-ui/roleselect-ui';
 
 @Component({
   selector: 'app-select-player-form',
@@ -15,32 +15,31 @@ export class SelectPlayerForm {
   homeTeam: InputSignal<Team | undefined> = input();
   awayTeam: InputSignal<Team | undefined> = input();
 
-  battingTeam = signal(this.returnBattingTeam());
-  bowlingTeam = signal(this.returnBowlingTeam());
-
-  formLabel = input('');
+  formLabel: InputSignal<Roles | undefined> = input();
 
   returnPlayerType(): string {
-    if (this.formLabel() === 'Bat') {
+    if (this.formLabel() === Roles.Bat) {
       return "Batter";
-    } else if (this.formLabel() === 'Bowl') {
+    } else if (this.formLabel() === Roles.Bowl) {
       return "Bowler";
     } else {
       return "Fielder";
     }
   }
   returnTeamForm(): string[] {
-    if (this.formLabel() === 'Bat') {
-      return this.battingTeam();
+    let batTeam = this.returnBattingTeam();
+    let bowlTeam = this.returnBowlingTeam();
+    if (this.formLabel() === Roles.Bat) {
+      return batTeam;
     } else {
-      return this.bowlingTeam();
+      return bowlTeam;
     }
   }
   returnBattingTeam(): string[] {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     if (ht !== undefined && at != undefined) {
-      if (ht.returnTeamRole() === 'Batting') {
+      if (ht.returnTeamRole() === Roles.Bat) {
         return ht.returnPlayerNames();
       } else {
         return at.returnPlayerNames();
@@ -53,7 +52,7 @@ export class SelectPlayerForm {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === 'Bowling') {
+      if (ht.returnTeamRole() === Roles.Bowl) {
         return ht.returnPlayerNames();
       } else {
         return at.returnPlayerNames();
@@ -63,14 +62,14 @@ export class SelectPlayerForm {
     }
   }
 
-  playerChosen = new FormControl(this.bowlingTeam()[0], { nonNullable: true });
+  playerChosen = new FormControl(this.returnTeamForm()[0], { nonNullable: true });
 
   @Output() eventPlayerChosen: EventEmitter<MatchEventTeams> = new EventEmitter();
 
   emitPlayerChosenEvent() {
     let name = this.returnPlayerName();
     switch (this.formLabel()) {
-      case 'Bat': {
+      case Roles.Bat: {
         let event: MatchEventTeams = {
           event: MatchEvents.BatterChosen,
           data: name,
@@ -78,7 +77,7 @@ export class SelectPlayerForm {
         this.eventPlayerChosen.emit(event);
         break;
       }
-      case 'Bowl': {
+      case Roles.Bowl: {
         let event: MatchEventTeams = {
           event: MatchEvents.BowlerChosen,
           data: name,
@@ -86,7 +85,7 @@ export class SelectPlayerForm {
         this.eventPlayerChosen.emit(event);
         break;
       }
-      case 'Field': {
+      case Roles.Field: {
         let event: MatchEventTeams = {
           event: MatchEvents.FielderChosen,
           data: name,

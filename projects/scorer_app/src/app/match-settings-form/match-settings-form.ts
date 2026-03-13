@@ -71,7 +71,6 @@ export class MatchSettingsForm {
       event: MatchEvents.TeamsSelected,
       data: team,
     };
-    console.log(team);
     this.setMatchSettings.emit(eventEmit);
   }
 }

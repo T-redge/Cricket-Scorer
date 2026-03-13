@@ -9,11 +9,9 @@ export class InningsClass {
     this.maxOvers = maxOvers;
     this.overs.set(0);
   }
-
   overCompleted() {
     this.overs.update(curr => curr + 1);
   }
-
   checkInningComplete(): boolean {
     if (this.overs() === this.maxOvers) {
       return true;
@@ -21,7 +19,6 @@ export class InningsClass {
       return false;
     }
   }
-
   returnOverCount(): number {
     return this.overs()
   }

@@ -1,8 +1,9 @@
-import { Component, computed, inject, input, InputSignal, signal } from '@angular/core';
-import { App } from '../app';
+import { Component, computed, input, InputSignal, signal } from '@angular/core';
 import { Team } from '../team-class/team-class';
 import { OverClass } from '../over-class/over-class';
 import { CommentaryUi } from '../commentary-ui/commentary-ui';
+import { Roles } from '../roleselect-ui/roleselect-ui';
+import { InningsClass } from '../innings-class/innings-class';
 
 @Component({
   selector: 'app-scorer-ui',
@@ -13,7 +14,8 @@ import { CommentaryUi } from '../commentary-ui/commentary-ui';
 export class ScorerUi {
   homeTeam: InputSignal<Team | undefined> = input();
   awayTeam: InputSignal<Team | undefined> = input();
-  overCount: InputSignal<OverClass | undefined> = input();
+  overCount: InputSignal<InningsClass | undefined> = input();
+  deliveryCount: InputSignal<OverClass | undefined> = input();
 
   tossWinner = signal(this.returnTossWinner());
 
@@ -38,9 +40,10 @@ export class ScorerUi {
   });
 
   oversBowled = computed(() => {
-    let oc = this.overCount();
-    if (oc !== undefined) {
-      return 0.0;
+    let over = this.overCount();
+    let delivery = this.deliveryCount();
+    if (over !== undefined && delivery !== undefined) {
+      return over.returnOverCount() + "." + delivery.returnDeliveryCount();
     } else {
       return "o.b";
     }
@@ -71,15 +74,6 @@ export class ScorerUi {
       return "Default Bowler";
     }
   });
-  bowlTwo = computed(() => {
-    let bt = this.returnBowlingTeam();
-    if (bt !== undefined) {
-      return bt.returnLastBowler();
-    } else {
-      return "Default Bowler";
-    }
-  });
-
   returnTossWinner(): string {
     let ht = this.homeTeam();
     let at = this.awayTeam();
@@ -114,7 +108,7 @@ export class ScorerUi {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === 'Batting') {
+      if (ht.returnTeamRole() === Roles.Bat) {
         return ht.returnTeamName();
       } else {
         return at.returnTeamName();
@@ -128,7 +122,7 @@ export class ScorerUi {
     let at = this.awayTeam();
 
     if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === 'Bowling') {
+      if (ht.returnTeamRole() === Roles.Bowl) {
         return ht.returnTeamName();
       } else {
         return at.returnTeamName();
@@ -141,7 +135,7 @@ export class ScorerUi {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() == "Batting") {
+      if (ht.returnTeamRole() === Roles.Bat) {
         return ht;
       } else {
         return at;
@@ -154,7 +148,7 @@ export class ScorerUi {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === "Bowling") {
+      if (ht.returnTeamRole() === Roles.Bowl) {
         return ht;
       } else {
         return at;
@@ -167,8 +161,8 @@ export class ScorerUi {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     let pName = name;
-    if (ht !== undefined && at !== undefined && pName !== '') {
-      if (ht.returnTeamRole() === "Batting") {
+    if (ht !== undefined && at !== undefined) {
+      if (ht.returnTeamRole() === Roles.Bat) {
         let pStats = ht.returnPlayerProfile(pName).returnBatProfile().returnScore();
         return pStats;
       } else {
@@ -183,13 +177,21 @@ export class ScorerUi {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     let pName = name;
-    if (ht !== undefined && at !== undefined && pName !== '') {
-      if (ht.returnTeamRole() === "Bowling") {
-        let pStats = ht.returnPlayerProfile(pName).returnBowlProfile().returnScore();
-        return pStats;
+    if (ht !== undefined && at !== undefined) {
+      if (ht.returnTeamRole() === Roles.Bowl) {
+        let pStats = ht.returnPlayerProfile(pName);
+        if (pStats !== undefined) {
+          return pStats.returnBowlProfile().returnScore();
+        } else {
+          return " ";
+        }
       } else {
-        let pStats = at.returnPlayerProfile(pName).returnBowlProfile().returnScore();
-        return pStats;
+        let pStats = at.returnPlayerProfile(pName);
+        if (pStats !== undefined) {
+          return pStats.returnBowlProfile().returnScore();
+        } else {
+          return " "
+        }
       }
     } else {
       return "o-m-w-r";
@@ -199,13 +201,21 @@ export class ScorerUi {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     let pName = name;
-    if (ht !== undefined && at !== undefined && pName !== '') {
-      if (ht.returnTeamRole() === "Bowling") {
-        let pStats = ht.returnPlayerProfile(pName).returnBowlProfile().returnExtras();
-        return pStats;
+    if (ht !== undefined && at !== undefined) {
+      if (ht.returnTeamRole() === Roles.Bowl) {
+        let pStats = ht.returnPlayerProfile(pName);
+        if (pStats !== undefined) {
+          return pStats.returnBowlProfile().returnExtras();
+        } else {
+          return " ";
+        }
       } else {
-        let pStats = at.returnPlayerProfile(pName).returnBowlProfile().returnExtras();
-        return pStats;
+        let pStats = at.returnPlayerProfile(pName);
+        if (pStats !== undefined) {
+          return pStats.returnBowlProfile().returnExtras();
+        } else {
+          return " ";
+        }
       }
     } else {
       return "wd(w) nb(n)";

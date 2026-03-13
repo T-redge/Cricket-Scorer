@@ -5,7 +5,18 @@
   display: grid;
 }
 h4 {
-  grid-column: 1;
   margin: 0;
   text-decoration: underline;
+}
+dl {
+  list-style-type: none;
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+}
+dt {
+  font-weight: bold;
+  grid-column: 1;
+}
+dd {
+  grid-column: 2;
 }

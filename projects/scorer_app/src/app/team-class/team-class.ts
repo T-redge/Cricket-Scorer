@@ -1,10 +1,11 @@
-import { signal } from "@angular/core";
+import { signal, WritableSignal } from "@angular/core";
 import { PlayerClass } from "../player-class/player-class";
+import { Roles } from "../roleselect-ui/roleselect-ui";
 
 export class Team {
   private teamName = signal('');
   private tossWon = signal(false);
-  private teamRole = signal('');
+  private teamRole: WritableSignal<Roles> = signal(Roles.Default);
   private playerMap: Map<string, PlayerClass> = new Map;
 
   private teamOvers = signal(0);
@@ -83,7 +84,7 @@ export class Team {
   setTossResult(win: boolean) {
     this.tossWon.set(win);
   }
-  setTeamRole(role: string) {
+  setTeamRole(role: Roles) {
     this.teamRole.set(role);
   }
   strikeRotated() {
@@ -99,7 +100,7 @@ export class Team {
     }
     return names;
   }
-  returnTeamRole(): string {
+  returnTeamRole(): Roles {
     return this.teamRole();
   }
   returnTossResult(): boolean {

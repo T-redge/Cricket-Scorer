@@ -4,7 +4,7 @@
     <h3>Select Openers</h3>
     <form [formGroup]="openerForm">
       <div id="PlayerOne">
-        @for (player of batTeam(); track $index) {
+        @for (player of returnBattingTeam(); track $index) {
           <div>
             <input
               (click)="onClickP1($index)"
@@ -17,7 +17,7 @@
         <button id="ResetB1" (click)="resetPlayerOneForm()">Reset Selection</button>
       </div>
       <div id="PlayerTwo">
-        @for (player of batTeam(); track $index) {
+        @for (player of returnBattingTeam(); track $index) {
           <div>
             <input
               (click)="onClickP2($index)"

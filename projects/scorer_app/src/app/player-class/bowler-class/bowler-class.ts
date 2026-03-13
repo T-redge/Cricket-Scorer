@@ -23,6 +23,7 @@ export class BowlerClass {
     this.wickets.update(curr => curr + 1);
   }
   runsConceded(runs: number) {
+    this.deliveryCompleted();
     this.runs.update(curr => curr + runs);
   }
   wideBowled(wides: number) {

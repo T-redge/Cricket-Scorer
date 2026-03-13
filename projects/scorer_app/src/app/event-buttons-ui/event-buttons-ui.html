@@ -2,10 +2,10 @@
 <html>
 <div id="EventButtons">
   <h4>Delivery Event</h4>
-    @if (overComplete()) {
+    @if (checkOverComplete()) {
       <button id="EndOver" >End Over</button>
     } @else {
-      <button id="Dot" >Dot</button>
+      <button (click)="dotBall()" id="Dot" >Dot</button>
       <button id="Runs" >Runs</button>
       <button id="Extra" >Extra</button>
       <button id="Wicket" >Wicket</button>

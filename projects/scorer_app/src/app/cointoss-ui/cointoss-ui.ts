@@ -1,7 +1,11 @@
-import { Component, EventEmitter, inject, input, InputSignal, Output } from '@angular/core';
-import { App } from '../app';
+import { Component, EventEmitter, input, InputSignal, Output } from '@angular/core';
 import { MatchEvents } from '../event-class/match-events';
-import { Team } from '../team-class/team-class';
+import { MatchEventTeams } from '../match-settings-form/match-settings-form';
+
+export type TossResult = {
+  home: boolean,
+  away: boolean,
+};
 
 @Component({
   selector: 'app-cointoss-ui',
@@ -28,13 +32,28 @@ export class CointossUi {
     }
   }
 
-  @Output() homeTeamWin: EventEmitter<MatchEvents> = new EventEmitter();
-  @Output() awayTeamWin: EventEmitter<MatchEvents> = new EventEmitter();
+  @Output() tossCompleted: EventEmitter<MatchEventTeams> = new EventEmitter();
 
   coinTossWinHome() {
-    this.homeTeamWin.emit(MatchEvents.HomeCoinWin);
+    let data: TossResult = {
+      home: true,
+      away: false,
+    }
+    let event: MatchEventTeams = {
+      event: MatchEvents.TossCompleted,
+      data: data,
+    };
+    this.tossCompleted.emit(event);
   }
   coinTossWinAway() {
-    this.awayTeamWin.emit(MatchEvents.AwayCoinWin);
+    let data: TossResult = {
+      home: false,
+      away: true,
+    }
+    let event: MatchEventTeams = {
+      event: MatchEvents.TossCompleted,
+      data: data,
+    };
+    this.tossCompleted.emit(event);
   }
 }

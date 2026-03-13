@@ -1,4 +1,5 @@
-import { signal } from "@angular/core";
+import { signal, WritableSignal } from "@angular/core";
+import { DeliveryType } from "../event-class/delivery-events";
 
 export class OverClass {
   private bowler = signal('');
@@ -6,6 +7,7 @@ export class OverClass {
   private runs = signal(0);
   private wickets = signal(0);
   private extras = signal(0);
+  private deliveryRecord: WritableSignal<Array<DeliveryType>> = signal(new Array);
 
   setBowler(bowlName: string) {
     this.bowler.set(bowlName);
@@ -14,6 +16,7 @@ export class OverClass {
     this.deliveries.update(curr => curr + 1);
   }
   runsScored(runs: number) {
+    this.deliveryCompleted();
     this.runs.update(curr => curr + runs);
   }
   wicketTaken() {
@@ -21,6 +24,12 @@ export class OverClass {
   }
   extrasConceded(runs: number) {
     this.extras.update(curr => curr + runs);
+  }
+  enterDeliveryRecord(delivery: DeliveryType) {
+    this.deliveryRecord().push(delivery);
+  }
+  returnDeliveryRecord(): Array<DeliveryType> {
+    return this.deliveryRecord();
   }
   returnBowlerName(): string {
     return this.bowler();

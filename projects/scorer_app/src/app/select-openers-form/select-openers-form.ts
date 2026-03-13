@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatchEvents } from '../event-class/match-events';
 import { Team } from '../team-class/team-class';
 import { MatchEventTeams } from '../match-settings-form/match-settings-form';
+import { Roles } from '../roleselect-ui/roleselect-ui';
 export type OpeningBats = {
   b1: string,
   b2: string,
@@ -17,13 +18,11 @@ export class SelectOpenersForm {
   homeTeam: InputSignal<Team | undefined> = input();
   awayTeam: InputSignal<Team | undefined> = input();
 
-  batTeam: WritableSignal<Array<string>> = signal(this.returnBattingTeam());
-
   returnBattingTeam(): Array<string> {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === 'Batting') {
+      if (ht.returnTeamRole() === Roles.Bat) {
         return ht.returnPlayerNames();
       } else {
         return at.returnPlayerNames();
@@ -49,7 +48,7 @@ export class SelectOpenersForm {
   onClickP1(index: number) {
     if (!this.openerForm.controls.playerOne.value) {
       this.batOneSelected.set(true);
-      let name = this.batTeam().at(index)!;
+      let name = this.returnBattingTeam().at(index)!;
       this.batOneName.set(name);
       this.openerForm.controls.playerOne.disable();
     } else {
@@ -60,7 +59,7 @@ export class SelectOpenersForm {
   onClickP2(index: number) {
     if (!this.openerForm.controls.playerTwo.value) {
       this.batTwoSelected.set(true);
-      let name = this.batTeam().at(index)!;
+      let name = this.returnBattingTeam().at(index)!;
       this.batTwoName.set(name);
       this.openerForm.controls.playerTwo.disable();
     } else {
