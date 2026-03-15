@@ -1,12 +1,12 @@
 import { signal, WritableSignal } from "@angular/core";
-import { DeliveryType } from "../event-class/delivery-events";
-import { NumberOvers } from "../match-class/match-class";
+import { OverClass } from "../over-class/over-class";
 
+export type Over = number;
 
 export class InningsClass {
   private maxOvers = signal(0);
   private overs: WritableSignal<number> = signal(0);
-  private overRecord: WritableSignal<Map<number, Array<DeliveryType>>> = signal(new Map);
+  private overRecord: WritableSignal<Map<Over, OverClass>> = signal(new Map);
 
   constructor() {
     this.maxOvers.set(0);
@@ -15,7 +15,7 @@ export class InningsClass {
   setMaxOvers(max: number) {
     this.maxOvers.set(max);
   }
-  overCompleted(dr: Array<DeliveryType>) {
+  overCompleted(dr: OverClass) {
     this.overs.update(curr => curr + 1);
     let ov = this.returnOverCount();
     this.overRecord().set(ov, dr);
@@ -24,14 +24,19 @@ export class InningsClass {
     let mo = this.maxOvers();
 
     let ov = this.overs();
-    console.warn(mo);
-    console.warn(ov);
-    console.warn(mo === NumberOvers.Five);
-    console.warn(mo === ov);
+
     if (ov === mo) {
       return true;
     } else {
       return false;
+    }
+  }
+  returnOverRecord(ov: Over): OverClass {
+    let record = this.overRecord().get(ov);
+    if (record !== undefined) {
+      return record;
+    } else {
+      return new OverClass;
     }
   }
   returnOverCount(): number {
