@@ -19,14 +19,19 @@ export class EventButtonsUi {
 
   @Output() deliveryEv: EventEmitter<MatchEventTeams> = new EventEmitter();
 
+  endOver() {
+    let event: MatchEventTeams = {
+      event: MatchEvents.OverComplete,
+      data: undefined,
+    };
+    this.deliveryEv.emit(event);
+  }
   checkOverComplete(): boolean {
     let ov = this.over();
     if (ov !== undefined) {
       if (ov.checkOverComplete()) {
-        console.warn("true");
         return true;
       } else {
-        console.warn("false");
         return false;
       }
     } else {

@@ -1,19 +1,34 @@
-import { signal } from "@angular/core";
+import { signal, WritableSignal } from "@angular/core";
+import { DeliveryType } from "../event-class/delivery-events";
+import { NumberOvers } from "../match-class/match-class";
 
 
 export class InningsClass {
-  private maxOvers = 0;
-  private overs = signal(0);
+  private maxOvers = signal(0);
+  private overs: WritableSignal<number> = signal(0);
+  private overRecord: WritableSignal<Map<number, Array<DeliveryType>>> = signal(new Map);
 
-  constructor(maxOvers: number) {
-    this.maxOvers = maxOvers;
+  constructor() {
+    this.maxOvers.set(0);
     this.overs.set(0);
   }
-  overCompleted() {
+  setMaxOvers(max: number) {
+    this.maxOvers.set(max);
+  }
+  overCompleted(dr: Array<DeliveryType>) {
     this.overs.update(curr => curr + 1);
+    let ov = this.returnOverCount();
+    this.overRecord().set(ov, dr);
   }
   checkInningComplete(): boolean {
-    if (this.overs() === this.maxOvers) {
+    let mo = this.maxOvers();
+
+    let ov = this.overs();
+    console.warn(mo);
+    console.warn(ov);
+    console.warn(mo === NumberOvers.Five);
+    console.warn(mo === ov);
+    if (ov === mo) {
       return true;
     } else {
       return false;

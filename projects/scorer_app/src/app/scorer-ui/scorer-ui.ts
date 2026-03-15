@@ -4,10 +4,13 @@ import { OverClass } from '../over-class/over-class';
 import { CommentaryUi } from '../commentary-ui/commentary-ui';
 import { Roles } from '../roleselect-ui/roleselect-ui';
 import { InningsClass } from '../innings-class/innings-class';
+import { DeliveryEvents, DeliveryType } from '../event-class/delivery-events';
+import { CommentaryType } from '../commentary-class/commentary-class';
+import { DeliveryUi } from '../delivery-ui/delivery-ui';
 
 @Component({
   selector: 'app-scorer-ui',
-  imports: [CommentaryUi],
+  imports: [CommentaryUi, DeliveryUi],
   templateUrl: './scorer-ui.html',
   styleUrl: './scorer-ui.css',
 })
@@ -16,9 +19,8 @@ export class ScorerUi {
   awayTeam: InputSignal<Team | undefined> = input();
   overCount: InputSignal<InningsClass | undefined> = input();
   deliveryCount: InputSignal<OverClass | undefined> = input();
-
   tossWinner = signal(this.returnTossWinner());
-
+  comms: InputSignal<Array<CommentaryType> | undefined> = input();
   batTeam = computed(() => this.returnBattingTeamName());
   bowlTeam = computed(() => this.returnBowlingTeamName());
 

@@ -1,4 +1,4 @@
-import { Component, signal, WritableSignal, type OnInit } from '@angular/core';
+import { Component, computed, signal, WritableSignal, type OnInit } from '@angular/core';
 import { load_teamfile, initRustWasm } from 'wasm-scorer';
 import { TeamlistUi } from './teamlist-ui/teamlist-ui';
 import { CointossUi, TossResult } from './cointoss-ui/cointoss-ui';
@@ -19,6 +19,7 @@ import { OverClass } from './over-class/over-class';
 import { EndOverUi } from './end-over-ui/end-over-ui';
 import { EndInningUi } from './end-inning-ui/end-inning-ui';
 import { MatchEventTeams, MatchSettingsForm, MatchSetting } from './match-settings-form/match-settings-form';
+import { CommentaryClass, CommentaryType } from './commentary-class/commentary-class';
 
 @Component({
   selector: 'app-root',
@@ -36,17 +37,18 @@ export class App implements OnInit {
   awayTeamName: WritableSignal<string> = signal('');
   maxOvers: WritableSignal<NumberOvers> = signal(NumberOvers.Default);
 
-  currentMatch: WritableSignal<MatchClass> = signal(new MatchClass());
-  currentInnings: WritableSignal<InningsClass> = signal(new InningsClass(NumberOvers.Default));
-  currentOver: WritableSignal<OverClass> = signal(new OverClass());
 
+
+  commentary: WritableSignal<Array<CommentaryType>> = signal(new Array);
   teamsMap: WritableSignal<Map<string, Team>> = signal(new Map);
 
   newGame = signal(false);
   newMatchStarted = signal(false);
   newInningsStarted = signal(false);
   showEndInningUi = signal(false);
-  currentDelivery = signal('');
+  currentDelivery: WritableSignal<DeliveryType> = signal({
+    batter: '', bowler: '', event: DeliveryEvents.Default, totalRuns: 0,
+  });
   deliveryComplete = signal(false);
   showTeamsUi = signal(false);
   showCoinTossUi = signal(false);
@@ -72,7 +74,13 @@ export class App implements OnInit {
     this.homeTeamName.set(ht);
     this.awayTeamName.set(at);
     this.maxOvers.set(ov);
+    this.currentInnings().setMaxOvers(ov);
+
   }
+
+  currentMatch: WritableSignal<MatchClass> = signal(new MatchClass());
+  currentInnings: WritableSignal<InningsClass> = signal(new InningsClass());
+  currentOver: WritableSignal<OverClass> = signal(new OverClass());
   loadTeams() {
     let htName = this.homeTeamName();
     let atName = this.awayTeamName();
@@ -156,6 +164,11 @@ export class App implements OnInit {
     this.extraFormTotal.set(extraEv);
     return extraEv;
   }
+  checkInningComplete = computed(() => {
+    let check = this.currentInnings().checkInningComplete();
+    console.warn(check);
+    return check;
+  });
   matchEvents(matchEv: MatchEventTeams) {
     let mEv = matchEv.event;
     let data = matchEv.data;
@@ -233,12 +246,14 @@ export class App implements OnInit {
       case MatchEvents.NewInning: {
         this.showEndInningUi.set(false);
         this.currentOver.set(new OverClass());
-        this.currentInnings.set(new InningsClass(this.maxOvers()));
+        this.currentInnings.set(new InningsClass());
+        this.currentInnings().setMaxOvers(this.maxOvers());
         this.showSelectOpeningBatsForm.set(true);
         break;
       }
       case MatchEvents.OverComplete: {
-        this.currentInnings().overCompleted();
+        let record = this.currentOver().returnDeliveryRecord();
+        this.currentInnings().overCompleted(record);
         let bowlName = this.returnBowlingTeam().returnCurrentBowler();
         this.returnBowlingTeam().returnPlayerProfile(bowlName).returnBowlProfile().overBowled();
         this.showEndOverUi.set(true);
@@ -247,6 +262,10 @@ export class App implements OnInit {
       case MatchEvents.DeliveryComplete: {
         let dEv: DeliveryType = data;
         this.deliveryEvent(dEv);
+        let ovNum = this.returnOverCount();
+        let comms = new CommentaryClass(ovNum, dEv);
+        let commEvent = comms.createCommentary();
+        this.commentary().unshift(commEvent);
         break;
       }
       case MatchEvents.NewOver: {
@@ -259,7 +278,6 @@ export class App implements OnInit {
     }
   }
   deliveryEvent(delivery: DeliveryType) {
-    console.log(delivery);
     let event = delivery.event;
     let batter = delivery.batter;
     let bowler = delivery.bowler;
@@ -276,6 +294,7 @@ export class App implements OnInit {
         ov.enterDeliveryRecord(delivery);
         batTeam.returnPlayerProfile(batter).returnBatProfile().addRunScored(runs);
         bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().runsConceded(runs);
+
         break;
       }
       case DeliveryEvents.Runs: {

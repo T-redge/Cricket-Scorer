@@ -40,6 +40,7 @@
       [awayTeam]="returnAwayTeam()"
       [overCount]="currentInnings()"
       [deliveryCount]="currentOver()"
+      [comms]="commentary()"
       />
       @if (showSelectPlayerForm()) {
         <app-select-player-form
@@ -56,10 +57,16 @@
       (deliveryEv)="matchEvents($event)"
       />
       @if (showEndOverUi()) {
-        <app-end-over-ui />
+        <app-end-over-ui
+          [checkInningEnd]="checkInningComplete()"
+          [lastOver]="currentOver()"
+          (newOver)="matchEvents($event)"
+          (endInning)="matchEvents($event)"
+        />
       }
       @if (showEndInningUi()) {
-        <app-end-inning-ui />
+        <app-end-inning-ui
+        />
       }
     }
   } @else {

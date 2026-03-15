@@ -6,7 +6,7 @@ import { MatchEvents } from '../event-class/match-events';
 export type MatchSetting = {
   home: string,
   away: string,
-  overs: number,
+  overs: NumberOvers,
 }
 export type MatchEventTeams = {
   event: MatchEvents,
@@ -34,7 +34,7 @@ export class MatchSettingsForm {
   selectTeams = new FormGroup({
     selectHomeTeam: new FormControl('Select...', { nonNullable: true }),
     selectAwayTeam: new FormControl('Select...', { nonNullable: true }),
-    setMaxOvers: new FormControl(0, { nonNullable: true }),
+    setMaxOvers: new FormControl(NumberOvers.Default, { nonNullable: true }),
   });
 
   @Output() setMatchSettings: EventEmitter<MatchEventTeams> = new EventEmitter();
@@ -66,11 +66,25 @@ export class MatchSettingsForm {
     let at = this.selectTeams.controls.selectAwayTeam.value;
     let ov = this.selectTeams.controls.setMaxOvers.value;
 
+    let totalOver = this.returnOverNumber(ov);
+    console.warn(totalOver);
+    console.assert(totalOver === 5);
+
     let team: MatchSetting = { home: ht, away: at, overs: ov };
     let eventEmit: MatchEventTeams = {
       event: MatchEvents.TeamsSelected,
       data: team,
     };
     this.setMatchSettings.emit(eventEmit);
+  }
+  returnOverNumber(over: NumberOvers): number {
+    console.log(over);
+    switch (over) {
+      case NumberOvers.Five: return 5;
+      case NumberOvers.Ten: return 10;
+      case NumberOvers.Twenty: return 20;
+      case NumberOvers.Fifty: return 50;
+      default: return 0;
+    }
   }
 }

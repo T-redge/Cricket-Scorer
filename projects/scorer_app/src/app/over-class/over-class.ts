@@ -1,5 +1,5 @@
 import { signal, WritableSignal } from "@angular/core";
-import { DeliveryType } from "../event-class/delivery-events";
+import { DeliveryEvents, DeliveryType } from "../event-class/delivery-events";
 
 export class OverClass {
   private bowler = signal('');

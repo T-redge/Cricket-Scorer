@@ -33,7 +33,11 @@
 }
 app-commentary-ui {
   grid-column: 2;
-  grid-row: 2 /span 3;
+  grid-row: 3 /span 2;
+}
+app-delivery-ui {
+  grid-column: 2;
+  grid-row: 2;
 }
 table {
   width: 100%;

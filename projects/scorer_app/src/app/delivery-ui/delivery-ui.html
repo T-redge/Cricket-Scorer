@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+
+<div id="Record">
+  <h4>Delivery Record</h4>
+  @for (ball of returnOverRecord(); track $index) {
+    <div>
+    @if (checkForDot(ball)) {
+      <div id="Dot"></div>
+    } @else {
+      <label>{{returnDeliveryRecord(ball)}}</label>
+    }
+  </div>
+  }
+</div>
+
+</html>

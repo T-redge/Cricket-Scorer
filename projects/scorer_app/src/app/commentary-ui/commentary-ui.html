@@ -1,21 +1,15 @@
 <!DOCTYPE html>
 <html>
-<div id="Commentary">
-      <dl>
-        <dt>Over</dt>
-        <dd>
-        @for (delivery of returnDeliveryDisplay(); track $index) {
-          {{delivery}}
-        }
-        </dd>
-
-      </dl>
+<div id="Comm">
   <h4>Commentary</h4>
-  <ul>
-    @for (delivery of returnDeliveryRecord(); track $index) {
-    <li>{{returnCommentaryString(delivery)}}</li>
-    }
-  </ul>
+    <div id="History">
+      <dl>
+      @for (comm of returnComms(); track $index) {
+        <dt>{{returnCommOver(comm)}}</dt>
+        <dd>{{returnCommLine(comm)}}</dd>
+      }
+      </dl>
+    </div>
 </div>
 
 </html>

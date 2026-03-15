@@ -3,7 +3,7 @@
 <div id="EventButtons">
   <h4>Delivery Event</h4>
     @if (checkOverComplete()) {
-      <button id="EndOver" >End Over</button>
+      <button (click)="endOver()" id="EndOver" >End Over</button>
     } @else {
       <button (click)="dotBall()" id="Dot" >Dot</button>
       <button id="Runs" >Runs</button>

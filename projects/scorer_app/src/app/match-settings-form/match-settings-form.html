@@ -23,7 +23,7 @@
       <label for="Over">Max Overs</label>
       <select id="Over" formControlName="setMaxOvers">
       @for (overs of overLimit; track $index) {
-        <option value="{{overs}}">{{overs}}</option>
+        <option value={{overs}}>{{overs}}</option>
       }
       </select>
     </div>

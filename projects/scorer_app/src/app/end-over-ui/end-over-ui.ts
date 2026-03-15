@@ -1,6 +1,7 @@
 import { Component, EventEmitter, input, Output } from '@angular/core';
 import { OverClass } from '../over-class/over-class';
 import { MatchEvents } from '../event-class/match-events';
+import { MatchEventTeams } from '../match-settings-form/match-settings-form';
 
 @Component({
   selector: 'app-end-over-ui',
@@ -12,8 +13,8 @@ export class EndOverUi {
   checkInningEnd = input(false);
   lastOver = input(new OverClass());
 
-  @Output() newOver: EventEmitter<MatchEvents> = new EventEmitter();
-  @Output() endInning: EventEmitter<MatchEvents> = new EventEmitter();
+  @Output() newOver: EventEmitter<MatchEventTeams> = new EventEmitter();
+  @Output() endInning: EventEmitter<MatchEventTeams> = new EventEmitter();
 
   returnBowlerName(): string {
     let name = this.lastOver().returnBowlerName();
@@ -35,9 +36,17 @@ export class EndOverUi {
 
 
   emitNewOver() {
-    this.newOver.emit(MatchEvents.NewOver);
+    let event: MatchEventTeams = {
+      event: MatchEvents.NewOver,
+      data: undefined,
+    };
+    this.newOver.emit(event);
   }
   emitEndInning() {
-    this.endInning.emit(MatchEvents.InningsComplete);
+    let event: MatchEventTeams = {
+      event: MatchEvents.InningsComplete,
+      data: undefined,
+    };
+    this.endInning.emit(event);
   }
 }
