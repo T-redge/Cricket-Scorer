@@ -1,4 +1,4 @@
-import { Component, EventEmitter, input, InputSignal, Output, signal } from '@angular/core';
+import { Component, computed, EventEmitter, input, InputSignal, Output, signal } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatchEvents } from '../event-class/match-events';
 import { Team } from '../team-class/team-class';
@@ -26,7 +26,7 @@ export class SelectPlayerForm {
       return "Fielder";
     }
   }
-  returnTeamForm(): string[] {
+  returnTeamForm = computed(() => {
     let batTeam = this.returnBattingTeam();
     let bowlTeam = this.returnBowlingTeam();
     if (this.formLabel() === Roles.Bat) {
@@ -34,11 +34,12 @@ export class SelectPlayerForm {
     } else {
       return bowlTeam;
     }
-  }
+  });
+
   returnBattingTeam(): string[] {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-    if (ht !== undefined && at != undefined) {
+    if (ht !== undefined && at !== undefined) {
       if (ht.returnTeamRole() === Roles.Bat) {
         return ht.returnPlayerNames();
       } else {
@@ -58,7 +59,7 @@ export class SelectPlayerForm {
         return at.returnPlayerNames();
       }
     } else {
-      return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+      return ['Hello', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
     }
   }
 
@@ -97,7 +98,10 @@ export class SelectPlayerForm {
   }
 
   returnPlayerName(): string {
-    let name = this.playerChosen.getRawValue();
-    return name;
+    if (this.playerChosen.dirty) {
+      return this.playerChosen.getRawValue();
+    } else {
+      return ''
+    }
   }
 }

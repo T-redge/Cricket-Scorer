@@ -59,7 +59,7 @@
       @if (showEndOverUi()) {
         <app-end-over-ui
           [checkInningEnd]="checkInningComplete()"
-          [lastOver]="currentOver()"
+          [lastOver]="returnLastOver()"
           (newOver)="matchEvents($event)"
           (endInning)="matchEvents($event)"
         />

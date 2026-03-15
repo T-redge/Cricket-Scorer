@@ -1,12 +1,13 @@
-import { Component, computed, EventEmitter, Output, signal, WritableSignal } from '@angular/core';
+import { Component, EventEmitter, Output, signal, WritableSignal } from '@angular/core';
 import { NumberOvers } from '../match-class/match-class';
-import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatchEvents } from '../event-class/match-events';
+
 
 export type MatchSetting = {
   home: string,
   away: string,
-  overs: NumberOvers,
+  overs: number,
 }
 export type MatchEventTeams = {
   event: MatchEvents,
@@ -26,6 +27,7 @@ export class MatchSettingsForm {
     "Morley",
   ];
   overLimit: Array<NumberOvers> = [
+    NumberOvers.Default,
     NumberOvers.Five,
     NumberOvers.Ten,
     NumberOvers.Twenty,
@@ -34,7 +36,7 @@ export class MatchSettingsForm {
   selectTeams = new FormGroup({
     selectHomeTeam: new FormControl('Select...', { nonNullable: true }),
     selectAwayTeam: new FormControl('Select...', { nonNullable: true }),
-    setMaxOvers: new FormControl(NumberOvers.Default, { nonNullable: true }),
+    setMaxOvers: new FormControl(this.overLimit[0], { nonNullable: true }),
   });
 
   @Output() setMatchSettings: EventEmitter<MatchEventTeams> = new EventEmitter();
@@ -53,7 +55,6 @@ export class MatchSettingsForm {
   checkHomeAway() {
     let ht = this.selectTeams.controls.selectHomeTeam.value;
     let at = this.selectTeams.controls.selectAwayTeam.value;
-
     if (ht === at || this.checkPristine()) {
       this.buttonDisabled.set(true);
     } else {
@@ -64,13 +65,13 @@ export class MatchSettingsForm {
   submitTeams() {
     let ht = this.selectTeams.controls.selectHomeTeam.value;
     let at = this.selectTeams.controls.selectAwayTeam.value;
-    let ov = this.selectTeams.controls.setMaxOvers.value;
+    let ov: NumberOvers = this.selectTeams.controls.setMaxOvers.value;
 
-    let totalOver = this.returnOverNumber(ov);
-    console.warn(totalOver);
-    console.assert(totalOver === 5);
+    let totalOver: number = this.returnOverNumber(ov);
 
-    let team: MatchSetting = { home: ht, away: at, overs: ov };
+
+
+    let team: MatchSetting = { home: ht, away: at, overs: totalOver };
     let eventEmit: MatchEventTeams = {
       event: MatchEvents.TeamsSelected,
       data: team,
@@ -78,8 +79,9 @@ export class MatchSettingsForm {
     this.setMatchSettings.emit(eventEmit);
   }
   returnOverNumber(over: NumberOvers): number {
-    console.log(over);
+
     switch (over) {
+      case NumberOvers.Default: return 0;
       case NumberOvers.Five: return 5;
       case NumberOvers.Ten: return 10;
       case NumberOvers.Twenty: return 20;

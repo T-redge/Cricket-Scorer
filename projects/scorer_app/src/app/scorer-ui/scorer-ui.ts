@@ -19,7 +19,7 @@ export class ScorerUi {
   awayTeam: InputSignal<Team | undefined> = input();
   overCount: InputSignal<InningsClass | undefined> = input();
   deliveryCount: InputSignal<OverClass | undefined> = input();
-  tossWinner = signal(this.returnTossWinner());
+  tossWinner = computed(() => this.returnTossWinner());
   comms: InputSignal<Array<CommentaryType> | undefined> = input();
   batTeam = computed(() => this.returnBattingTeamName());
   bowlTeam = computed(() => this.returnBowlingTeamName());

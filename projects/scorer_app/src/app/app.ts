@@ -35,7 +35,7 @@ export class App implements OnInit {
 
   homeTeamName: WritableSignal<string> = signal('');
   awayTeamName: WritableSignal<string> = signal('');
-  maxOvers: WritableSignal<NumberOvers> = signal(NumberOvers.Default);
+  maxOvers: WritableSignal<number> = signal(0);
 
 
 
@@ -150,8 +150,14 @@ export class App implements OnInit {
       return ht;
     }
   }
-  returnCurrentOver(): OverClass {
-    return this.currentOver();
+  returnLastOver(): OverClass {
+    let overNum = this.currentInnings().returnOverCount();
+    let overRecord = this.currentInnings().returnOverRecord(overNum);
+    if (overRecord !== undefined) {
+      return overRecord;
+    } else {
+      return new OverClass;
+    }
   }
   returnOverCount(): string {
     let overs = this.currentInnings().returnOverCount().toString();
@@ -166,7 +172,6 @@ export class App implements OnInit {
   }
   checkInningComplete = computed(() => {
     let check = this.currentInnings().checkInningComplete();
-    console.warn(check);
     return check;
   });
   matchEvents(matchEv: MatchEventTeams) {
@@ -174,7 +179,7 @@ export class App implements OnInit {
     let data = matchEv.data;
     let ht = this.returnHomeTeam()!;
     let at = this.returnAwayTeam()!;
-    let ov = this.returnCurrentOver();
+    let ov = this.currentOver();
     switch (mEv) {
       case MatchEvents.TeamsSelected: {
         this.setMatchSettings(data);
@@ -252,10 +257,11 @@ export class App implements OnInit {
         break;
       }
       case MatchEvents.OverComplete: {
-        let record = this.currentOver().returnDeliveryRecord();
+        let record = this.currentOver();
         this.currentInnings().overCompleted(record);
         let bowlName = this.returnBowlingTeam().returnCurrentBowler();
         this.returnBowlingTeam().returnPlayerProfile(bowlName).returnBowlProfile().overBowled();
+        this.currentOver.set(new OverClass());
         this.showEndOverUi.set(true);
         break;
       }
@@ -272,7 +278,7 @@ export class App implements OnInit {
         this.showEndOverUi.set(false);
         this.formSelect.set(Roles.Bowl);
         this.showSelectPlayerForm.set(true);
-        this.currentOver.set(new OverClass());
+
         break;
       }
     }
@@ -282,7 +288,7 @@ export class App implements OnInit {
     let batter = delivery.batter;
     let bowler = delivery.bowler;
     let runs = delivery.totalRuns;
-    let ov = this.returnCurrentOver();
+    let ov = this.currentOver();
     let batTeam = this.returnBattingTeam();
     let bowlTeam = this.returnBowlingTeam();
     switch (event) {
