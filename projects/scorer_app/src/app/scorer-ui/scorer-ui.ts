@@ -17,12 +17,11 @@ import { DeliveryUi } from '../delivery-ui/delivery-ui';
 export class ScorerUi {
   homeTeam: InputSignal<Team | undefined> = input();
   awayTeam: InputSignal<Team | undefined> = input();
-  overCount: InputSignal<InningsClass | undefined> = input();
-  deliveryCount: InputSignal<OverClass | undefined> = input();
   tossWinner = computed(() => this.returnTossWinner());
   comms: InputSignal<Array<CommentaryType> | undefined> = input();
   batTeam = computed(() => this.returnBattingTeamName());
   bowlTeam = computed(() => this.returnBowlingTeamName());
+  over: InputSignal<OverClass | undefined> = input();
 
   homeTeamScore = computed(() => {
     let ht = this.homeTeam();
@@ -33,7 +32,7 @@ export class ScorerUi {
     }
   });
   awayTeamScore = computed(() => {
-    let at = this.homeTeam();
+    let at = this.awayTeam();
     if (at !== undefined) {
       return at.returnTeamScore();
     } else {
@@ -42,15 +41,13 @@ export class ScorerUi {
   });
 
   oversBowled = computed(() => {
-    let over = this.overCount();
-    let delivery = this.deliveryCount();
-    if (over !== undefined && delivery !== undefined) {
-      return over.returnOverCount() + "." + delivery.returnDeliveryCount();
+    let over = this.returnBowlingTeam();
+    if (over !== undefined) {
+      return over.returnOversScore();
     } else {
       return "o.b";
     }
   });
-
   batOne = computed(() => {
     let bt = this.returnBattingTeam();
     if (bt !== undefined) {
@@ -67,8 +64,7 @@ export class ScorerUi {
       return "Default Batter";
     }
   });
-
-  bowlOne = computed(() => {
+  bowler = computed(() => {
     let bt = this.returnBowlingTeam();
     if (bt !== undefined) {
       return bt.returnCurrentBowler();
@@ -159,7 +155,7 @@ export class ScorerUi {
       return undefined;
     }
   }
-  returnBatterStats(name: string): string {
+  returnBatterScores(name: string): string {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     let pName = name;
@@ -175,7 +171,7 @@ export class ScorerUi {
       return "s(b)";
     }
   }
-  returnBowlerStats(name: string): string {
+  returnBowlerFigures(name: string): [string, string] {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     let pName = name;
@@ -183,44 +179,20 @@ export class ScorerUi {
       if (ht.returnTeamRole() === Roles.Bowl) {
         let pStats = ht.returnPlayerProfile(pName);
         if (pStats !== undefined) {
-          return pStats.returnBowlProfile().returnScore();
+          return pStats.returnBowlProfile().returnFigures();
         } else {
-          return " ";
+          return [" ", ""];
         }
       } else {
         let pStats = at.returnPlayerProfile(pName);
         if (pStats !== undefined) {
-          return pStats.returnBowlProfile().returnScore();
+          return pStats.returnBowlProfile().returnFigures();
         } else {
-          return " "
+          return ["", ""];
         }
       }
     } else {
-      return "o-m-w-r";
-    }
-  }
-  returnBowlerExtras(name: string): string {
-    let ht = this.homeTeam();
-    let at = this.awayTeam();
-    let pName = name;
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bowl) {
-        let pStats = ht.returnPlayerProfile(pName);
-        if (pStats !== undefined) {
-          return pStats.returnBowlProfile().returnExtras();
-        } else {
-          return " ";
-        }
-      } else {
-        let pStats = at.returnPlayerProfile(pName);
-        if (pStats !== undefined) {
-          return pStats.returnBowlProfile().returnExtras();
-        } else {
-          return " ";
-        }
-      }
-    } else {
-      return "wd(w) nb(n)";
+      return ["o-m-w-r", "0wd 0nb"];
     }
   }
 }

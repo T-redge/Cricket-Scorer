@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<div id="EndMatch">
+  <h4 id="Title">Match Complete</h4>
+  <div id="HT">
+    <h4>{{returnHomeTeamName()}}</h4>
+    <div id="Batting">
+      <table>
+        <tr>
+          <th id="Name">Batter</th>
+          <th></th>
+          <th id="Score">Score</th>
+        </tr>
+        @for (score of returnHomeTeamBatting(); track $index) {
+        <tr>
+          <td id="Name">{{score[0]}}</td>
+          <td></td>
+          <td>{{score[1]}}</td>
+        </tr>
+        }
+      </table>
+      <table>
+        <tr>
+          <th>Overs</th>
+          <th>5</th>
+          <th>Extras</th>
+          <th>0w 0nb 0b 0lb</th>
+          <th>Total</th>
+          <th>{{returnHomeTeamScore()}}</th>
+        </tr>
+      </table>
+    </div>
+    <div id="Bowling">
+      <table>
+        <tr>
+          <th id="Name">Bowler</th>
+          <th></th>
+          <th id="Score">Figures</th>
+        </tr>
+        @for (figures of returnAwayTeamBowling(); track $index) {
+        <tr>
+          <td id="Name">{{figures[0]}}</td>
+          <td></td>
+          <td>{{figures[1]}}</td>
+        </tr>
+        }
+      </table>
+    </div>
+  </div>
+  <div id="AT">
+    <h4>{{returnAwayTeamName()}}</h4>
+    <div id="Batting">
+      <table>
+        <tr>
+          <th id="Name">Batter</th>
+          <th></th>
+          <th id="Score">Score</th>
+        </tr>
+        @for (score of returnAwayTeamBatting(); track $index) {
+        <tr>
+          <td id="Name">{{score[0]}}</td>
+          <td></td>
+          <td>{{score[1]}}</td>
+        </tr>
+        }
+        </table>
+        <table>
+        <tr>
+          <th>Overs</th>
+          <th>5</th>
+          <th>Extras</th>
+          <th>0w 0nb 0b 0lb</th>
+          <th>Total</th>
+          <th>{{returnHomeTeamScore()}}</th>
+        </tr>
+      </table>
+    </div>
+    <div id="Bowling">
+      <table>
+        <tr>
+          <th id="Name">Bowlers</th>
+          <th></th>
+          <th id="Score">Figures</th>
+        </tr>
+        @for (figures of returnHomeTeamBowling(); track $index) {
+        <tr>
+          <td id="Name">{{figures[0]}}</td>
+          <td></td>
+          <td>{{figures[1]}}</td>
+        </tr>
+        }
+      </table>
+    </div>
+  </div>
+</div>
+
+</html>

@@ -28,4 +28,9 @@ h4 {
   background: black;
   place-self: center;
 }
+#NotDot {
+  grid-column: 2;
+  place-self: center;
+  font-weight: bold;
+}
 

@@ -13,18 +13,20 @@ import { DeliveryEvents, DeliveryType } from './event-class/delivery-events';
 import { MatchEvents } from './event-class/match-events';
 import { RunForm } from './run-form/run-form';
 import { WicketForm } from './wicket-form/wicket-form';
-import { MatchClass, NumberOvers } from './match-class/match-class';
+import { MatchClass } from './match-class/match-class';
 import { InningsClass } from './innings-class/innings-class';
 import { OverClass } from './over-class/over-class';
 import { EndOverUi } from './end-over-ui/end-over-ui';
 import { EndInningUi } from './end-inning-ui/end-inning-ui';
 import { MatchEventTeams, MatchSettingsForm, MatchSetting } from './match-settings-form/match-settings-form';
 import { CommentaryClass, CommentaryType } from './commentary-class/commentary-class';
+import { EndMatchUi } from './end-match-ui/end-match-ui';
+import { UiEvent, UiEventType } from './event-class/ui-events';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [MatchSettingsForm, EndInningUi, EndOverUi, WicketForm, RunForm, EventButtonsUi, TeamlistUi, CointossUi, RoleselectUi, ScorerUi, SelectPlayerForm, SelectOpenersForm, ExtraForm],
+  imports: [EndMatchUi, MatchSettingsForm, EndInningUi, EndOverUi, WicketForm, RunForm, EventButtonsUi, TeamlistUi, CointossUi, RoleselectUi, ScorerUi, SelectPlayerForm, SelectOpenersForm, ExtraForm],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -37,10 +39,13 @@ export class App implements OnInit {
   awayTeamName: WritableSignal<string> = signal('');
   maxOvers: WritableSignal<number> = signal(0);
 
-
+  currentMatch: WritableSignal<MatchClass> = signal(new MatchClass());
+  currentInnings: WritableSignal<InningsClass> = signal(new InningsClass());
+  currentOver: WritableSignal<OverClass> = signal(new OverClass());
 
   commentary: WritableSignal<Array<CommentaryType>> = signal(new Array);
   teamsMap: WritableSignal<Map<string, Team>> = signal(new Map);
+  uiEventMap: WritableSignal<Map<string, boolean>> = signal(new Map);
 
   newGame = signal(false);
   newMatchStarted = signal(false);
@@ -63,6 +68,7 @@ export class App implements OnInit {
   showRunForm = signal(false);
   runFormTotal = signal(0);
   showWicketForm = signal(false);
+  showEndMatchUi = signal(false);
   wicketFormDismissal = signal('');
   event = signal('');
 
@@ -77,10 +83,15 @@ export class App implements OnInit {
     this.currentInnings().setMaxOvers(ov);
 
   }
-
-  currentMatch: WritableSignal<MatchClass> = signal(new MatchClass());
-  currentInnings: WritableSignal<InningsClass> = signal(new InningsClass());
-  currentOver: WritableSignal<OverClass> = signal(new OverClass());
+  loadEventMap() {
+    this.uiEventMap().set(UiEvent.ShowRunForm, false);
+  }
+  changeUi(key: UiEvent, value: boolean) {
+    this.uiEventMap().set(key, value);
+  }
+  loadUi(key: string): boolean {
+    return this.uiEventMap().get(key)!;
+  }
   loadTeams() {
     let htName = this.homeTeamName();
     let atName = this.awayTeamName();
@@ -160,15 +171,35 @@ export class App implements OnInit {
     }
   }
   returnOverCount(): string {
-    let overs = this.currentInnings().returnOverCount().toString();
-    let deliveries = this.currentOver().returnDeliveryCount().toString();
-    let count = overs + '.' + deliveries;
-
+    let count = this.returnBowlingTeam().returnOversScore();
     return count;
   }
   retrieveExtraAmount(extraEv: number) {
     this.extraFormTotal.set(extraEv);
     return extraEv;
+  }
+  switchTeamRoles() {
+    let ht = this.returnHomeTeam();
+    let at = this.returnAwayTeam();
+
+    if (ht !== undefined && at !== undefined) {
+      if (ht.returnTeamRole() === Roles.Bat) {
+        ht.setTeamRole(Roles.Bowl);
+        at.setTeamRole(Roles.Bat);
+      } else {
+        ht.setTeamRole(Roles.Bat);
+        at.setTeamRole(Roles.Bowl);
+      }
+    }
+  }
+  returnLastInning(): InningsClass | undefined {
+    let teamName = this.returnBattingTeam().returnTeamName();
+    let inning = this.currentMatch().returnInning(teamName);
+    if (inning !== undefined) {
+      return inning;
+    } else {
+      return undefined;
+    }
   }
   checkInningComplete = computed(() => {
     let check = this.currentInnings().checkInningComplete();
@@ -244,11 +275,15 @@ export class App implements OnInit {
         break;
       }
       case MatchEvents.InningsComplete: {
+        let batTeam = this.returnBattingTeam().returnTeamName();
+        let record = this.currentInnings();
+        this.currentMatch().inningCompleted(batTeam, record);
         this.showEndOverUi.set(false);
         this.showEndInningUi.set(true);
         break;
       }
       case MatchEvents.NewInning: {
+        this.switchTeamRoles();
         this.showEndInningUi.set(false);
         this.currentOver.set(new OverClass());
         this.currentInnings.set(new InningsClass());
@@ -281,6 +316,12 @@ export class App implements OnInit {
 
         break;
       }
+      case MatchEvents.MatchEnd: {
+        this.showEndInningUi.set(false);
+        this.newInningsStarted.set(false);
+        this.showEndMatchUi.set(true);
+        break;
+      }
     }
   }
   deliveryEvent(delivery: DeliveryType) {
@@ -296,15 +337,15 @@ export class App implements OnInit {
         break;
       }
       case DeliveryEvents.DotBall: {
-        ov.runsScored(runs);
         ov.enterDeliveryRecord(delivery);
         batTeam.returnPlayerProfile(batter).returnBatProfile().addRunScored(runs);
         bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().runsConceded(runs);
-
         break;
       }
       case DeliveryEvents.Runs: {
-        this.showRunForm.set(true);
+        ov.enterDeliveryRecord(delivery);
+        batTeam.returnPlayerProfile(batter).returnBatProfile().addRunScored(runs);
+        bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().runsConceded(runs);
         break;
       }
       case DeliveryEvents.Wide: {
@@ -332,6 +373,16 @@ export class App implements OnInit {
         break;
       }
       case DeliveryEvents.Runout: {
+        break;
+      }
+    }
+  }
+  uiEvent(ui: UiEventType) {
+    let event = ui.event;
+    let bool = ui.bool;
+    switch (event) {
+      case UiEvent.ShowRunForm: {
+        this.changeUi(event, bool);
         break;
       }
     }

@@ -55,7 +55,7 @@ export class MatchSettingsForm {
   checkHomeAway() {
     let ht = this.selectTeams.controls.selectHomeTeam.value;
     let at = this.selectTeams.controls.selectAwayTeam.value;
-    if (ht === at || this.checkPristine()) {
+    if (ht === at /*|| this.checkPristine()*/) {
       this.buttonDisabled.set(true);
     } else {
       this.buttonDisabled.set(false);
@@ -81,7 +81,7 @@ export class MatchSettingsForm {
   returnOverNumber(over: NumberOvers): number {
 
     switch (over) {
-      case NumberOvers.Default: return 0;
+      case NumberOvers.Default: return 1;
       case NumberOvers.Five: return 5;
       case NumberOvers.Ten: return 10;
       case NumberOvers.Twenty: return 20;

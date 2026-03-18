@@ -1,6 +1,7 @@
-import { signal, WritableSignal } from "@angular/core";
+import { computed, signal, WritableSignal } from "@angular/core";
 import { PlayerClass } from "../player-class/player-class";
 import { Roles } from "../roleselect-ui/roleselect-ui";
+import { TeamExtras } from "../extra-class/extra-class";
 
 export class Team {
   private teamName = signal('');
@@ -8,17 +9,47 @@ export class Team {
   private teamRole: WritableSignal<Roles> = signal(Roles.Default);
   private playerMap: Map<string, PlayerClass> = new Map;
 
-  private teamOvers = signal(0);
-  private teamDeliveries = signal(0);
 
-  private teamRuns = signal(0);
-  private teamWickets = signal(0);
+  private teamOvers = computed(() => {
+    let overs = 0;
+    this.playerMap.forEach((profile) => {
+      let o = profile.returnBowlProfile().returnOversBowled();
+      overs += o;
+    });
+    return overs;
+  });
+  private teamDeliveries = computed(() => {
+    let bowler = this.returnCurrentBowler();
+    let deliveries = this.returnPlayerProfile(bowler);
+    if (deliveries !== undefined) {
+      return deliveries.returnBowlProfile().returnDeliveriesBowled();
+    } else {
+      return 0;
+    }
+  });
+  private teamRuns = computed(() => {
+    let runs = 0;
+    this.playerMap.forEach((profile) => {
+      let r = profile.returnBatProfile().returnRunsScored();
+      runs += r;
+    });
+    return runs;
+  });
+  private teamWickets = computed(() => {
+    let wickets = 0;
+    this.playerMap.forEach((profile) => {
+      let w = profile.returnBowlProfile().returnWicketsTaken();
+      wickets += w;
+    });
+    return wickets;
+  });
 
   private batterOne = signal('');
   private batterTwo = signal('');
 
   private currentBowler = signal('');
   private lastBowler = signal('');
+
   setTeamName(name: string) {
     this.teamName.set(name);
   }
@@ -49,18 +80,6 @@ export class Team {
   }
   returnBatterTwo(): string {
     return this.batterTwo();
-  }
-  teamDeliveryBowled() {
-    this.teamDeliveries.update(curr => curr + 1);
-  }
-  teamOverBowled() {
-    this.teamOvers.update(curr => curr + 1);
-  }
-  teamRunScored(runs: number) {
-    this.teamRuns.update(curr => curr + runs);
-  }
-  teamWicketDismissal() {
-    this.teamWickets.update(curr => curr + 1);
   }
   returnTeamScore(): string {
     let runs = this.teamRuns().toString();
@@ -128,19 +147,28 @@ export class Team {
     let b1 = this.batterOne();
     let b2 = this.batterTwo();
 
-    if (this.returnPlayerProfile(b1).batProfile.onStrike()) {
-      return this.returnPlayerProfile(b1);
-    } else {
-      return this.returnPlayerProfile(b2);
-    }
+    //if (this.returnPlayerProfile(b1).batProfile.onStrike()) {
+    //  return this.returnPlayerProfile(b1);
+    //} else {
+    return this.returnPlayerProfile(b2);
+    //}
+  }
+  returnBattingListScores(): Array<[string, string]> {
+    let list: Array<[string, string]> = [];
+    this.playerMap.forEach((profile, name) => {
+      let stat = profile.returnBatProfile();
+      let pName = name;
+      list.push([pName, stat.returnScore()]);
+    });
+    return list;
   }
   returnBowlerListFigures(): Array<[string, string]> {
     let list: Array<[string, string]> = [];
     this.playerMap.forEach((pProfile, pName) => {
       let stat = pProfile.returnBowlProfile();
       let name = pName;
-      if (stat.overs() > 0) {
-        list.push([name, stat.returnScore()]);
+      if (stat.returnOversBowled() > 0) {
+        list.push([name, stat.returnFigures()[0]]);
       }
     });
     return list;

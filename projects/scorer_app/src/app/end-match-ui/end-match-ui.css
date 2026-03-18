@@ -1,0 +1,42 @@
+#EndMatch {
+  border: solid 2.5px black;
+  background: white;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  grid-template-rows: auto auto;
+  grid-gap: 5px;
+}
+h4 {
+  margin: 0;
+  text-align: center;
+  text-decoration: underline;
+}
+table {
+  width: 100%;
+}
+th {
+  text-align: left;
+  text-decoration: underline;
+}
+td {
+  text-align: right;
+}
+#Title {
+  grid-row: 1;
+  grid-column: 1 /span 2;
+}
+#Name {
+  text-align: left;
+}
+#Score {
+  text-align: right;
+}
+#HT {
+  grid-column: 1;
+  grid-row: 2;
+}
+#AT {
+  grid-column: 2;
+  grid-row: 2;
+}

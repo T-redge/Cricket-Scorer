@@ -40,6 +40,12 @@ export class CommentaryClass {
         break;
       }
       case DeliveryEvents.Runs: {
+        let num = runs.toString();
+        if (runs === 1) {
+          line.set(num + " run scored");
+        } else {
+          line.set(num + " runs scored");
+        }
         break;
       }
       case DeliveryEvents.Wide: break;

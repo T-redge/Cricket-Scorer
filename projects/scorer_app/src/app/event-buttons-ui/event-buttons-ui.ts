@@ -5,6 +5,7 @@ import { MatchEventTeams } from '../match-settings-form/match-settings-form';
 import { OverClass } from '../over-class/over-class';
 import { InningsClass } from '../innings-class/innings-class';
 import { Team } from '../team-class/team-class';
+import { UiEvent, UiEventType } from '../event-class/ui-events';
 
 @Component({
   selector: 'app-event-buttons-ui',
@@ -16,8 +17,10 @@ export class EventButtonsUi {
   over: InputSignal<OverClass | undefined> = input()
   inning: InputSignal<InningsClass | undefined> = input();
   batTeam: InputSignal<Team | undefined> = input();
+  bowlTeam: InputSignal<Team | undefined> = input();
 
   @Output() deliveryEv: EventEmitter<MatchEventTeams> = new EventEmitter();
+  @Output() showForm: EventEmitter<UiEventType> = new EventEmitter();
 
   endOver() {
     let event: MatchEventTeams = {
@@ -27,9 +30,12 @@ export class EventButtonsUi {
     this.deliveryEv.emit(event);
   }
   checkOverComplete(): boolean {
+    let bowl = this.bowlTeam();
     let ov = this.over();
-    if (ov !== undefined) {
-      if (ov.checkOverComplete()) {
+    if (ov !== undefined && bowl !== undefined) {
+      let bowler = bowl.returnCurrentBowler();
+      let delivery = bowl.returnPlayerProfile(bowler)!.returnBowlProfile().returnDeliveriesBowled();
+      if (ov.checkOverComplete(delivery)) {
         return true;
       } else {
         return false;
@@ -59,5 +65,12 @@ export class EventButtonsUi {
     } else {
       console.warn("Error: Over or Batting Team undefined");
     }
+  }
+  showRunForm() {
+    let event: UiEventType = {
+      event: UiEvent.ShowRunForm,
+      bool: true,
+    };
+    this.showForm.emit(event);
   }
 }

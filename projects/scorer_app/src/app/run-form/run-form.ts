@@ -1,5 +1,9 @@
 import { Component, EventEmitter, input, InputSignal, Output, signal } from '@angular/core';
 import { DeliveryEvents, DeliveryType } from '../event-class/delivery-events';
+import { MatchEventTeams } from '../match-settings-form/match-settings-form';
+import { MatchEvents } from '../event-class/match-events';
+import { UiEvent, UiEventType } from '../event-class/ui-events';
+import { Team } from '../team-class/team-class';
 
 @Component({
   selector: 'app-run-form',
@@ -8,13 +12,13 @@ import { DeliveryEvents, DeliveryType } from '../event-class/delivery-events';
   styleUrl: './run-form.css',
 })
 export class RunForm {
-  batter = input('');
-  bowler = input('');
+  batTeam: InputSignal<Team | undefined> = input();
+  bowlTeam: InputSignal<Team | undefined> = input();
 
   runsScored = signal(1);
 
-  @Output() emitRunEvent: EventEmitter<DeliveryType> = new EventEmitter();
-
+  @Output() runEvent: EventEmitter<MatchEventTeams> = new EventEmitter();
+  @Output() hideRunForm: EventEmitter<UiEventType> = new EventEmitter();
   incrementRuns() {
     if (this.runsScored() < 6) {
       this.runsScored.update(curr => curr + 1);
@@ -26,12 +30,30 @@ export class RunForm {
     }
   }
   confirmRuns() {
-    let batName = this.batter();
-    let bowlName = this.bowler();
-    let dEv = DeliveryEvents.Runs;
-    let runs = this.runsScored();
+    let bat = this.batTeam();
+    let bowl = this.bowlTeam();
+    if (bat !== undefined && bowl !== undefined) {
+      let batName = bat.returnOnStrikePlayerName();
+      let bowlName = bowl.returnCurrentBowler();
+      let dEv = DeliveryEvents.Runs;
+      let runs = this.runsScored();
 
-    let delivery: DeliveryType = { batter: batName, bowler: bowlName, event: dEv, totalRuns: runs };
-    this.emitRunEvent.emit(delivery);
+      let delivery: DeliveryType = { batter: batName, bowler: bowlName, event: dEv, totalRuns: runs };
+
+      let event: MatchEventTeams = {
+        event: MatchEvents.DeliveryComplete,
+        data: delivery,
+      };
+
+      let ui: UiEventType = {
+        event: UiEvent.ShowRunForm,
+        bool: false,
+      };
+      console.log(delivery);
+      this.hideRunForm.emit(ui);
+      this.runEvent.emit(event);
+    } else {
+      console.warn("RunForm: Info undefined");
+    }
   }
 }

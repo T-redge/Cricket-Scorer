@@ -1,13 +1,13 @@
-import { signal } from '@angular/core';
+import { computed, signal } from '@angular/core';
+import { BowlerExtras } from '../../extra-class/extra-class';
 
 export class BowlerClass {
-  deliveries = signal(0);
-  overs = signal(0);
-  maidens = signal(0);
-  wickets = signal(0);
-  runs = signal(0);
-  wides = signal(0);
-  noballs = signal(0);
+  private deliveries = signal(0);
+  private overs = signal(0);
+  private maidens = signal(0);
+  private wickets = signal(0);
+  private runs = signal(0);
+  private extras = signal(new BowlerExtras);
 
   deliveryCompleted() {
     this.deliveries.update(curr => curr + 1);
@@ -21,34 +21,41 @@ export class BowlerClass {
   }
   wicketTaken() {
     this.wickets.update(curr => curr + 1);
+    this.deliveryCompleted();
   }
   runsConceded(runs: number) {
     this.deliveryCompleted();
     this.runs.update(curr => curr + runs);
   }
   wideBowled(wides: number) {
-    this.wides.update(curr => curr + wides);
-    this.runsConceded(wides);
+    this.extras().wideBowled(wides);
   }
   noballBowled(runs: number) {
-    let nb = 1;
-    this.noballs.update(curr => curr + nb);
-    this.runsConceded(runs + nb);
+    this.extras().noballBowled();
+    this.runsConceded(runs);
   }
-  returnScore(): string {
+  returnOversBowled(): number {
+    return this.overs();
+  }
+  returnDeliveriesBowled(): number {
+    return this.deliveries();
+  }
+  returnWicketsTaken(): number {
+    return this.wickets();
+  }
+  returnFigures(): [string, string] {
     let overs = this.overs().toString();
     let deliveries = this.deliveries().toString();
     let maidens = this.maidens().toString();
     let wickets = this.wickets().toString();
-    let runs = this.runs().toString();
-    let score = overs + "." + deliveries + "-" + maidens + "-" + wickets + "-" + runs;
-    return score;
-  }
-  returnExtras(): string {
-    let wides = this.wides();
-    let nb = this.noballs();
-
-    let extras = "wd(" + wides + "), nb(" + nb + ")";
-    return extras;
+    let runs = computed(() => {
+      let runs = this.runs();
+      let wd = this.extras().returnWideCount();
+      let nb = this.extras().returnNbCount();
+      return runs + wd + nb;
+    });
+    let score = overs + "." + deliveries + "-" + maidens + "-" + wickets + "-" + runs().toString();
+    let extras = this.extras().returnBowlerExtras();
+    return [score, extras];
   }
 }

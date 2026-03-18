@@ -1,9 +1,10 @@
 import { Component, EventEmitter, input, InputSignal, Output } from '@angular/core';
 import { Team } from '../team-class/team-class';
 import { InningsClass } from '../innings-class/innings-class';
-import { App } from '../app';
 import { MatchEvents } from '../event-class/match-events';
 import { Roles } from '../roleselect-ui/roleselect-ui';
+import { MatchEventTeams } from '../match-settings-form/match-settings-form';
+import { MatchClass } from '../match-class/match-class';
 
 @Component({
   selector: 'app-end-inning-ui',
@@ -16,8 +17,9 @@ export class EndInningUi {
   awayTeam: InputSignal<Team | undefined> = input();
 
   inning: InputSignal<InningsClass | undefined> = input();
-
-  @Output() newInningEvent: EventEmitter<MatchEvents> = new EventEmitter();
+  match: InputSignal<MatchClass | undefined> = input();
+  @Output() newInningEvent: EventEmitter<MatchEventTeams> = new EventEmitter();
+  @Output() endMatchEvent: EventEmitter<MatchEventTeams> = new EventEmitter();
 
   returnBatTeam(): Team | undefined {
     let ht = this.homeTeam();
@@ -69,6 +71,14 @@ export class EndInningUi {
       return 0.0;
     }
   }
+  returnBatTeamBatters(): Array<[string, string]> {
+    let bat = this.returnBatTeam();
+    if (bat !== undefined) {
+      return bat.returnBattingListScores();
+    } else {
+      return [["Default Batter", "Runs(Deliveries)"]];
+    }
+  }
   returnBowlTeamBowlers(): Array<[string, string]> {
     let bowl = this.returnBowlTeam();
     if (bowl !== undefined) {
@@ -78,6 +88,30 @@ export class EndInningUi {
     }
   }
   emitNewInningEvent() {
-    this.newInningEvent.emit(MatchEvents.NewInning);
+    let event: MatchEventTeams = {
+      event: MatchEvents.NewInning,
+      data: undefined,
+    }
+    this.newInningEvent.emit(event);
+  }
+  emitEndMatchEvent() {
+    let event: MatchEventTeams = {
+      event: MatchEvents.MatchEnd,
+      data: undefined,
+    };
+    this.endMatchEvent.emit(event);
+  }
+  checkMatchCompleted(): boolean {
+    let m = this.match();
+    if (m !== undefined) {
+      if (m.checkMatchComplete()) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+
   }
 }

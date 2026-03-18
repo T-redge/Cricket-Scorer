@@ -40,6 +40,11 @@ app-select-openers-form, app-select-player-form, app-end-over-ui, app-end-inning
   grid-row: 1 /span 2;
   z-index: 3;
 }
+app-end-match-ui {
+  align-self: center;
+  grid-column: 1 /span 4;
+  grid-row: 1/span 2;
+}
 
 
 

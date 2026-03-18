@@ -38,9 +38,8 @@
       <app-scorer-ui
       [homeTeam]="returnHomeTeam()"
       [awayTeam]="returnAwayTeam()"
-      [overCount]="currentInnings()"
-      [deliveryCount]="currentOver()"
       [comms]="commentary()"
+      [over]="currentOver()"
       />
       @if (showSelectPlayerForm()) {
         <app-select-player-form
@@ -54,8 +53,18 @@
       [over]="currentOver()"
       [inning]="currentInnings()"
       [batTeam]="returnBattingTeam()"
+      [bowlTeam]="returnBowlingTeam()"
       (deliveryEv)="matchEvents($event)"
+      (showForm)="uiEvent($event)"
       />
+      @if (loadUi('ShowRunForm')) {
+        <app-run-form
+          [batTeam]="returnBattingTeam()"
+          [bowlTeam]="returnBowlingTeam()"
+          (runEvent)="matchEvents($event)"
+          (hideRunForm)="uiEvent($event)"
+        />
+      }
       @if (showEndOverUi()) {
         <app-end-over-ui
           [checkInningEnd]="checkInningComplete()"
@@ -66,9 +75,22 @@
       }
       @if (showEndInningUi()) {
         <app-end-inning-ui
+        [homeTeam]="returnHomeTeam()"
+        [awayTeam]="returnAwayTeam()"
+        [inning]="currentInnings()"
+        [match]="currentMatch()"
+        (newInningEvent)="matchEvents($event)"
+        (endMatchEvent)="matchEvents($event)"
         />
       }
     }
+    @if (showEndMatchUi()) {
+      <app-end-match-ui
+      [homeTeam]="returnHomeTeam()"
+      [awayTeam]="returnAwayTeam()"
+      />
+    }
+
   } @else {
     <app-match-settings-form
       (setMatchSettings)="matchEvents($event)"

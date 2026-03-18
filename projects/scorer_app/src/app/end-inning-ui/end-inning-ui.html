@@ -2,6 +2,7 @@
 <html>
 <div id="EndInning">
   <h4>End of {{returnBatTeamName()}} Inning</h4>
+  <div id="Scores">
   <table>
     <tr>
       <th id="Name">Batting Team</th>
@@ -14,7 +15,19 @@
       <td>{{returnOversCompleted()}}</td>
     </tr>
     <tr>
-      <th id="Name">Bowling Team</th>
+      <th id="Name">Player</th>
+      <th></th>
+      <th>Score</th>
+    </tr>
+    @for (stat of returnBatTeamBatters(); track $index) {
+      <tr>
+        <td id="Name">{{stat[0]}}</td>
+        <td></td>
+        <td>{{stat[1]}}</td>
+      </tr>
+    }
+    <tr>
+      <th id="Name">Bowlers</th>
       <th></th>
       <th>Figures</th>
     </tr>
@@ -26,6 +39,11 @@
         </tr>
       }
   </table>
-  <button (click)="emitNewInningEvent()">New Inning</button>
+  </div>
+  @if (!checkMatchCompleted()) {
+    <button (click)="emitNewInningEvent()">New Inning</button>
+  } @else {
+    <button (click)="emitEndMatchEvent()">End Match</button>
+  }
 </div>
 </html>

@@ -1,6 +1,7 @@
 export enum MatchEvents {
   TeamsSelected = "TeamsSelected",
   MatchStart = "MatchStart",
+  MatchEnd = "MatchEnd",
   TossCompleted = "TossCompleted",
   RoleSelected = "RoleSelected",
 

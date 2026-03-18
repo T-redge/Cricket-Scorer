@@ -37,11 +37,11 @@
       </tr>
       <tr>
         <td id="Name">{{batOne()}}</td>
-        <td id="Score">{{returnBatterStats(batOne())}}</td>
+        <td id="Score">{{returnBatterScores(batOne())}}</td>
       </tr>
       <tr>
         <td id="Name">{{batTwo()}}</td>
-        <td id="Score">{{returnBatterStats(batTwo())}}</td>
+        <td id="Score">{{returnBatterScores(batTwo())}}</td>
       </tr>
     </table>
   </div>
@@ -53,13 +53,13 @@
         <th id="Score">Extras</th>
       </tr>
       <tr>
-        <td id="Name">{{bowlOne()}}</td>
-        <td id="Score">{{returnBowlerStats(bowlOne())}}</td>
-        <td id="Score">{{returnBowlerExtras(bowlOne())}}</td>
+        <td id="Name">{{bowler()}}</td>
+        <td id="Score">{{returnBowlerFigures(bowler())[0]}}</td>
+        <td id="Score">{{returnBowlerFigures(bowler())[1]}}</td>
       </tr>
     </table>
   </div>
-  <app-delivery-ui [over]="deliveryCount()" />
+  <app-delivery-ui [over]="over()" />
   <app-commentary-ui [comms]="comms()" />
 </div>
 

@@ -13,6 +13,7 @@ export class DeliveryUi {
 
   returnOverRecord(): Array<DeliveryType> {
     let ov = this.over();
+    console.log(ov);
     if (ov !== undefined) {
       return ov.returnDeliveryRecord();
     } else {
