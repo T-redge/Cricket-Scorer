@@ -48,10 +48,42 @@ export class CommentaryClass {
         }
         break;
       }
-      case DeliveryEvents.Wide: break;
-      case DeliveryEvents.Noball: break;
-      case DeliveryEvents.Byes: break;
-      case DeliveryEvents.Legbyes: break;
+      case DeliveryEvents.Wide: {
+        let num = runs.toString();
+        if (runs === 1) {
+          line.set(num + " wide bowled");
+        } else {
+          line.set(num + " wides bowled");
+        }
+        break;
+      }
+      case DeliveryEvents.Noball: {
+        let num = runs.toString();
+        if (runs === 0) {
+          line.set("NoBall bowled");
+        } else {
+          line.set("Noball bowled + " + num);
+        }
+        break;
+      }
+      case DeliveryEvents.Byes: {
+        let num = runs.toString();
+        if (runs === 0) {
+          line.set(num + " bye scored");
+        } else {
+          line.set(num + " byes scored");
+        }
+        break;
+      }
+      case DeliveryEvents.Legbyes: {
+        let num = runs.toString();
+        if (runs === 0) {
+          line.set(num + " legbye scored");
+        } else {
+          line.set(num + " legbyes scored");
+        }
+        break;
+      }
       case DeliveryEvents.Bowled: break;
       case DeliveryEvents.Caught: break;
       case DeliveryEvents.Lbw: break;

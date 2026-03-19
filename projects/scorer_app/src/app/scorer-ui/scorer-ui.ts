@@ -195,4 +195,13 @@ export class ScorerUi {
       return ["o-m-w-r", "0wd 0nb"];
     }
   }
+  returnExtras(): string {
+    let bt = this.returnBowlingTeam();
+    if (bt !== undefined) {
+      return bt.returnExtras();
+    } else {
+      console.warn("Undefined extras");
+      return " ";
+    }
+  }
 }

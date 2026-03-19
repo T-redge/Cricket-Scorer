@@ -1,4 +1,4 @@
-import { computed, signal, WritableSignal } from "@angular/core";
+import { computed, isWritableSignal, signal, WritableSignal, ɵɵpureFunction0 } from "@angular/core";
 import { PlayerClass } from "../player-class/player-class";
 import { Roles } from "../roleselect-ui/roleselect-ui";
 import { TeamExtras } from "../extra-class/extra-class";
@@ -9,7 +9,9 @@ export class Team {
   private teamRole: WritableSignal<Roles> = signal(Roles.Default);
   private playerMap: Map<string, PlayerClass> = new Map;
 
-
+  private teamExtras: WritableSignal<TeamExtras> = signal(new TeamExtras);
+  private teamBowlerWides = signal(0);
+  private teamBowlerNb = signal(0);
   private teamOvers = computed(() => {
     let overs = 0;
     this.playerMap.forEach((profile) => {
@@ -29,11 +31,15 @@ export class Team {
   });
   private teamRuns = computed(() => {
     let runs = 0;
+    let wd = this.teamBowlerWides();
+    let nb = this.teamBowlerNb();
+    let b = this.teamExtras().returnByeCount();
+    let lb = this.teamExtras().returnLegbyeCount();
     this.playerMap.forEach((profile) => {
       let r = profile.returnBatProfile().returnRunsScored();
       runs += r;
     });
-    return runs;
+    return runs + b + lb + wd + nb;
   });
   private teamWickets = computed(() => {
     let wickets = 0;
@@ -106,9 +112,22 @@ export class Team {
   setTeamRole(role: Roles) {
     this.teamRole.set(role);
   }
+  byeBowled(runs: number) {
+    this.teamExtras().byeBowled(runs);
+  }
+  legbyeBowled(runs: number) {
+    this.teamExtras().legbyeBowled(runs);
+  }
   strikeRotated() {
     this.returnPlayerProfile(this.batterOne()).returnBatProfile().changeStrikeStatus();
     this.returnPlayerProfile(this.batterTwo()).returnBatProfile().changeStrikeStatus();
+
+  }
+  getBowlersWide(wd: number) {
+    this.teamBowlerWides.update(curr => curr + wd);
+  }
+  getBowlersNb(nb: number) {
+    this.teamBowlerNb.update(curr => curr + nb);
   }
   returnPlayerNames(): string[] {
     let names = new Array;
@@ -143,15 +162,31 @@ export class Team {
     }
   }
 
-  returnOnStrikePlayer(): PlayerClass {
+  checkBatOneStrike(): string {
     let b1 = this.batterOne();
+    let bat = this.returnPlayerProfile(b1);
+    if (bat !== undefined) {
+      if (bat.returnBatProfile().returnOnstrike()) {
+        return '*';
+      } else {
+        return '';
+      }
+    } else {
+      return '';
+    }
+  }
+  checkBatTwoStrike(): string {
     let b2 = this.batterTwo();
-
-    //if (this.returnPlayerProfile(b1).batProfile.onStrike()) {
-    //  return this.returnPlayerProfile(b1);
-    //} else {
-    return this.returnPlayerProfile(b2);
-    //}
+    let bat = this.returnPlayerProfile(b2);
+    if (bat !== undefined) {
+      if (bat.returnBatProfile().returnOnstrike()) {
+        return '*';
+      } else {
+        return '';
+      }
+    } else {
+      return '';
+    }
   }
   returnBattingListScores(): Array<[string, string]> {
     let list: Array<[string, string]> = [];
@@ -172,5 +207,18 @@ export class Team {
       }
     });
     return list;
+  }
+  returnExtras(): string {
+    let teamExtras = this.teamExtras().returnTeamExtras();
+    let wd = 0;
+    let n = 0;
+    this.playerMap.forEach((profile) => {
+      let wides = profile.returnBowlProfile().returnExtras().returnWideCount();
+      wd += wides;
+      let nb = profile.returnBowlProfile().returnExtras().returnNbCount();
+      n += nb;
+    });
+    let bowlerExtras = wd.toString() + 'w ' + n.toString() + 'nb';
+    return bowlerExtras + ' ' + teamExtras;
   }
 }

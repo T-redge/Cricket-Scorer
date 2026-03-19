@@ -12,6 +12,9 @@ export class BowlerClass {
   deliveryCompleted() {
     this.deliveries.update(curr => curr + 1);
   }
+  illegalDeliveryDontIncrementDeliveries() {
+    this.deliveries.update(curr => curr - 1);
+  }
   overBowled() {
     this.overs.update(curr => curr + 1);
     this.deliveries.set(0);
@@ -42,6 +45,9 @@ export class BowlerClass {
   }
   returnWicketsTaken(): number {
     return this.wickets();
+  }
+  returnExtras(): BowlerExtras {
+    return this.extras();
   }
   returnFigures(): [string, string] {
     let overs = this.overs().toString();

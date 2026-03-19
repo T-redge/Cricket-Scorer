@@ -36,11 +36,11 @@
         <th id="Score">Runs(Balls Faced)</th>
       </tr>
       <tr>
-        <td id="Name">{{batOne()}}</td>
+        <td id="Name">{{batOne()}}{{returnBattingTeam()!.checkBatOneStrike()}}</td>
         <td id="Score">{{returnBatterScores(batOne())}}</td>
       </tr>
       <tr>
-        <td id="Name">{{batTwo()}}</td>
+        <td id="Name">{{batTwo()}}{{returnBattingTeam()!.checkBatTwoStrike()}}</td>
         <td id="Score">{{returnBatterScores(batTwo())}}</td>
       </tr>
     </table>
@@ -56,6 +56,11 @@
         <td id="Name">{{bowler()}}</td>
         <td id="Score">{{returnBowlerFigures(bowler())[0]}}</td>
         <td id="Score">{{returnBowlerFigures(bowler())[1]}}</td>
+      </tr>
+      <tr>
+        <th></th>
+        <th>Extras</th>
+        <td id="Score">{{returnBowlingTeam()!.returnExtras()}}</td>
       </tr>
     </table>
   </div>

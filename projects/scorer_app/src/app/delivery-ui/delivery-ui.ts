@@ -13,7 +13,6 @@ export class DeliveryUi {
 
   returnOverRecord(): Array<DeliveryType> {
     let ov = this.over();
-    console.log(ov);
     if (ov !== undefined) {
       return ov.returnDeliveryRecord();
     } else {
@@ -32,10 +31,10 @@ export class DeliveryUi {
     let runs = dT.totalRuns;
     switch (ev) {
       case DeliveryEvents.Runs: return runs.toString();
-      case DeliveryEvents.Wide: break;
-      case DeliveryEvents.Noball: break;
-      case DeliveryEvents.Byes: break;
-      case DeliveryEvents.Legbyes: break;
+      case DeliveryEvents.Wide: return runs.toString() + 'wd';
+      case DeliveryEvents.Noball: return 'nb' + runs.toString();
+      case DeliveryEvents.Byes: return runs.toString() + 'b';
+      case DeliveryEvents.Legbyes: return runs.toString() + 'lb';
       case DeliveryEvents.Bowled: break;
       case DeliveryEvents.Caught: break;
       case DeliveryEvents.Lbw: break;

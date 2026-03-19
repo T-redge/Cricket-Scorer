@@ -5,4 +5,5 @@ export type UiEventType = {
 
 export enum UiEvent {
   ShowRunForm = "ShowRunForm",
+  showExtraForm = "ShowExtraForm",
 }

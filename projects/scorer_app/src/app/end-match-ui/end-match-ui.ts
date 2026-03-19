@@ -43,6 +43,10 @@ export class EndMatchUi {
     let ht = this.returnHomeTeam();
     return ht.returnBowlerListFigures();
   }
+  returnHomeTeamExtras(): string {
+    let ht = this.returnHomeTeam();
+    return ht.returnExtras();
+  }
   returnAwayTeamBatting(): Array<[string, string]> {
     let at = this.returnAwayTeam();
     return at.returnBattingListScores()
@@ -50,6 +54,10 @@ export class EndMatchUi {
   returnAwayTeamBowling(): Array<[string, string]> {
     let at = this.returnAwayTeam();
     return at.returnBowlerListFigures();
+  }
+  returnAwayTeamExtras(): string {
+    let at = this.returnAwayTeam();
+    return at?.returnExtras();
   }
   returnHomeTeamScore(): string {
     let ht = this.returnHomeTeam();

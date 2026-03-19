@@ -1,5 +1,9 @@
-import { Component, EventEmitter, input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, input, InputSignal, Output, signal } from '@angular/core';
 import { DeliveryEvents, DeliveryType } from '../event-class/delivery-events';
+import { UiEvent, UiEventType } from '../event-class/ui-events';
+import { MatchEventTeams } from '../match-settings-form/match-settings-form';
+import { Team } from '../team-class/team-class';
+import { MatchEvents } from '../event-class/match-events';
 
 
 @Component({
@@ -9,10 +13,11 @@ import { DeliveryEvents, DeliveryType } from '../event-class/delivery-events';
   styleUrl: './extra-form.css',
 })
 export class ExtraForm {
-  batter = input('');
-  bowler = input('');
+  batTeam: InputSignal<Team | undefined> = input();
+  bowlTeam: InputSignal<Team | undefined> = input();
 
-  @Output() extraEvent: EventEmitter<DeliveryType> = new EventEmitter();
+  @Output() extraEvent: EventEmitter<MatchEventTeams> = new EventEmitter();
+  @Output() hideExtraForm: EventEmitter<UiEventType> = new EventEmitter();
 
   formLabel = signal(DeliveryEvents.Default);
   showTotalConcededForm = signal(false);
@@ -32,12 +37,10 @@ export class ExtraForm {
   byesBowled() {
     this.formLabel.set(DeliveryEvents.Byes);
     this.showTotalConcededForm.set(true);
-
   }
   legbyesBowled() {
     this.formLabel.set(DeliveryEvents.Legbyes);
     this.showTotalConcededForm.set(true);
-
   }
   incrementExtras() {
     switch (this.formLabel()) {
@@ -83,13 +86,25 @@ export class ExtraForm {
     }
   }
   confirmExtrasAmount() {
-    let batName = this.batter();
-    let bowlName = this.bowler();
-    let dEv = this.formLabel();
-    let runs = this.numExtras();
-
-    let delivery: DeliveryType = { batter: batName, bowler: bowlName, event: dEv, totalRuns: runs };
-    this.extraEvent.emit(delivery);
+    let batTeam = this.batTeam();
+    let bowlTeam = this.bowlTeam();
+    if (batTeam !== undefined && bowlTeam !== undefined) {
+      let dEv = this.formLabel();
+      let runs = this.numExtras();
+      let batName = batTeam.returnOnStrikePlayerName();
+      let bowlName = bowlTeam.returnCurrentBowler();
+      let delivery: DeliveryType = { batter: batName, bowler: bowlName, event: dEv, totalRuns: runs };
+      let event: MatchEventTeams = {
+        event: MatchEvents.DeliveryComplete,
+        data: delivery,
+      };
+      let ui: UiEventType = {
+        event: UiEvent.showExtraForm,
+        bool: false,
+      }
+      this.extraEvent.emit(event);
+      this.hideExtraForm.emit(ui);
+    }
   }
   returnTitleText(): string {
     if (this.formLabel() === DeliveryEvents.Wide) {

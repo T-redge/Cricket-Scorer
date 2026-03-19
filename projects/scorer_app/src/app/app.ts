@@ -85,6 +85,7 @@ export class App implements OnInit {
   }
   loadEventMap() {
     this.uiEventMap().set(UiEvent.ShowRunForm, false);
+    this.uiEventMap().set(UiEvent.showExtraForm, false);
   }
   changeUi(key: UiEvent, value: boolean) {
     this.uiEventMap().set(key, value);
@@ -246,7 +247,6 @@ export class App implements OnInit {
         batTeam.setBatterOne(selection.b1);
         batTeam.setBatterTwo(selection.b2);
         this.showSelectOpeningBatsForm.set(false);
-        this.newInningsStarted.set(true);
         this.formSelect.set(Roles.Bowl);
         this.showSelectPlayerForm.set(true);
         break;
@@ -259,13 +259,18 @@ export class App implements OnInit {
       case MatchEvents.BowlerChosen: {
         let selection: string = data;
         let bowlTeam = this.returnBowlingTeam();
+
         if (bowlTeam.returnCurrentBowler() !== '') {
           let previous = bowlTeam.returnCurrentBowler();
           bowlTeam.setLastBowler(previous);
         }
         bowlTeam.setCurrentBowler(selection);
         ov.setBowler(selection);
+
         this.showSelectPlayerForm.set(false);
+        if (!this.newInningsStarted()) {
+          this.newInningsStarted.set(true);
+        }
         this.showBtnUi.set(true);
         break;
       }
@@ -311,6 +316,8 @@ export class App implements OnInit {
       }
       case MatchEvents.NewOver: {
         this.showEndOverUi.set(false);
+        let batTeam = this.returnBattingTeam();
+        batTeam.strikeRotated();
         this.formSelect.set(Roles.Bowl);
         this.showSelectPlayerForm.set(true);
 
@@ -346,18 +353,34 @@ export class App implements OnInit {
         ov.enterDeliveryRecord(delivery);
         batTeam.returnPlayerProfile(batter).returnBatProfile().addRunScored(runs);
         bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().runsConceded(runs);
+        if (runs % 2 !== 0) {
+          batTeam.strikeRotated();
+        }
         break;
       }
       case DeliveryEvents.Wide: {
+        ov.enterDeliveryRecord(delivery);
+        batTeam.getBowlersWide(runs);
+        bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().wideBowled(runs);
         break;
       }
       case DeliveryEvents.Noball: {
+        ov.enterDeliveryRecord(delivery);
+        batTeam.getBowlersNb(1);
+        batTeam.returnPlayerProfile(batter).returnBatProfile().addRunScored(runs);
+        bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().noballBowled(runs);
         break;
       }
       case DeliveryEvents.Byes: {
+        ov.enterDeliveryRecord(delivery);
+        bowlTeam.byeBowled(runs);
+        batTeam.returnPlayerProfile(batter).returnBatProfile().addDeliveryFaced();
         break;
       }
       case DeliveryEvents.Legbyes: {
+        ov.enterDeliveryRecord(delivery);
+        bowlTeam.legbyeBowled(runs);
+        batTeam.returnPlayerProfile(batter).returnBatProfile().addDeliveryFaced();
         break;
       }
       case DeliveryEvents.Bowled: {
@@ -376,16 +399,12 @@ export class App implements OnInit {
         break;
       }
     }
+    bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().deliveryCompleted();
   }
   uiEvent(ui: UiEventType) {
     let event = ui.event;
     let bool = ui.bool;
-    switch (event) {
-      case UiEvent.ShowRunForm: {
-        this.changeUi(event, bool);
-        break;
-      }
-    }
+    this.changeUi(event, bool);
   }
 }
 

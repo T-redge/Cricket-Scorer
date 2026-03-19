@@ -73,4 +73,11 @@ export class EventButtonsUi {
     };
     this.showForm.emit(event);
   }
+  showExtraForm() {
+    let event: UiEventType = {
+      event: UiEvent.showExtraForm,
+      bool: true,
+    }
+    this.showForm.emit(event);
+  }
 }

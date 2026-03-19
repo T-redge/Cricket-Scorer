@@ -34,6 +34,14 @@
         (openingBatters)="matchEvents($event)"
       />
     }
+    @if (showSelectPlayerForm()) {
+      <app-select-player-form
+      [homeTeam]="returnHomeTeam()"
+      [awayTeam]="returnAwayTeam()"
+      [formLabel]="formSelect()"
+      (eventPlayerChosen)="matchEvents($event)"
+      />
+    }
     @if (newInningsStarted()) {
       <app-scorer-ui
       [homeTeam]="returnHomeTeam()"
@@ -63,6 +71,14 @@
           [bowlTeam]="returnBowlingTeam()"
           (runEvent)="matchEvents($event)"
           (hideRunForm)="uiEvent($event)"
+        />
+      }
+      @if (loadUi('ShowExtraForm')) {
+        <app-extra-form
+          [batTeam]="returnBattingTeam()"
+          [bowlTeam]="returnBowlingTeam()"
+          (extraEvent)="matchEvents($event)"
+          (hideExtraForm)="uiEvent($event)"
         />
       }
       @if (showEndOverUi()) {

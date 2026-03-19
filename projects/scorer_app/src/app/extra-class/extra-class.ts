@@ -25,8 +25,27 @@ export class BowlerExtras {
     return extras;
   }
 }
-
 export class TeamExtras {
-  bye = signal(0);
-  legbye = signal(0);
+  private bye = signal(0);
+  private legbye = signal(0);
+
+  byeBowled(byes: number) {
+    this.bye.update(curr => curr + byes);
+  }
+  legbyeBowled(lb: number) {
+    this.legbye.update(curr => curr + lb);
+  }
+  returnByeCount(): number {
+    return this.bye();
+  }
+  returnLegbyeCount(): number {
+    return this.legbye();
+  }
+  returnTeamExtras(): string {
+    let b = this.returnByeCount().toString();
+    let lb = this.returnLegbyeCount().toString();
+
+    let extras = b + "b " + lb + "lb ";
+    return extras;
+  }
 }

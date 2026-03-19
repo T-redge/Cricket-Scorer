@@ -1,6 +1,5 @@
 import { Component, input, InputSignal } from '@angular/core';
 import { CommentaryType } from '../commentary-class/commentary-class';
-import { DeliveryUi } from '../delivery-ui/delivery-ui';
 
 @Component({
   selector: 'app-commentary-ui',
