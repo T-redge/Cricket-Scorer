@@ -21,7 +21,7 @@ export class BowlerExtras {
     let wides = this.returnWideCount().toString();
     let nb = this.returnNbCount().toString();
 
-    let extras = wides + "w " + nb + "nb";
+    let extras = "w " + wides + " nb " + nb;
     return extras;
   }
 }
@@ -45,7 +45,7 @@ export class TeamExtras {
     let b = this.returnByeCount().toString();
     let lb = this.returnLegbyeCount().toString();
 
-    let extras = b + "b " + lb + "lb ";
+    let extras = "b " + b + " lb " + lb;
     return extras;
   }
 }

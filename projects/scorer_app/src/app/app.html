@@ -42,6 +42,16 @@
       (eventPlayerChosen)="matchEvents($event)"
       />
     }
+    @if (showEndInningUi()) {
+      <app-end-inning-ui
+        [homeTeam]="returnHomeTeam()"
+        [awayTeam]="returnAwayTeam()"
+        [inning]="currentInnings()"
+        [match]="currentMatch()"
+        (newInningEvent)="matchEvents($event)"
+        (endMatchEvent)="matchEvents($event)"
+      />
+    }
     @if (newInningsStarted()) {
       <app-scorer-ui
       [homeTeam]="returnHomeTeam()"
@@ -87,16 +97,6 @@
           [lastOver]="returnLastOver()"
           (newOver)="matchEvents($event)"
           (endInning)="matchEvents($event)"
-        />
-      }
-      @if (showEndInningUi()) {
-        <app-end-inning-ui
-        [homeTeam]="returnHomeTeam()"
-        [awayTeam]="returnAwayTeam()"
-        [inning]="currentInnings()"
-        [match]="currentMatch()"
-        (newInningEvent)="matchEvents($event)"
-        (endMatchEvent)="matchEvents($event)"
         />
       }
     }

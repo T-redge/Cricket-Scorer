@@ -12,7 +12,18 @@ export class OverClass {
     return run;
   });
   private wickets = signal(0);
-  private extras = signal(0);
+  private extras = computed(() => {
+    let extras = 0;
+    this.deliveryRecord().forEach((delivery) => {
+      if (delivery.event === DeliveryEvents.Wide) {
+        extras += delivery.totalRuns;
+      }
+      if (delivery.event === DeliveryEvents.Noball) {
+        extras += 1;
+      }
+    });
+    return extras;
+  });
   private deliveryRecord: WritableSignal<Array<DeliveryType>> = signal(new Array);
 
   setBowler(bowlName: string) {
@@ -20,9 +31,6 @@ export class OverClass {
   }
   wicketTaken() {
     this.wickets.update(curr => curr + 1);
-  }
-  extrasConceded(runs: number) {
-    this.extras.update(curr => curr + runs);
   }
   enterDeliveryRecord(delivery: DeliveryType) {
     this.deliveryRecord().push(delivery);
@@ -41,6 +49,19 @@ export class OverClass {
   }
   returnExtrasConceded(): number {
     return this.extras();
+  }
+  checkPreviousDeliveryLegit(): boolean {
+    let last = this.deliveryRecord().length - 1;
+    let record = this.deliveryRecord().at(last);
+    if (record !== undefined) {
+      if (record.event === DeliveryEvents.Wide || record.event === DeliveryEvents.Noball) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return true;
+    }
   }
   checkOverComplete(deliveries: number): boolean {
     if (deliveries === 6) {

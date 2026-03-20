@@ -218,7 +218,7 @@ export class Team {
       let nb = profile.returnBowlProfile().returnExtras().returnNbCount();
       n += nb;
     });
-    let bowlerExtras = wd.toString() + 'w ' + n.toString() + 'nb';
+    let bowlerExtras = 'w ' + wd.toString() + ' nb ' + n.toString();
     return bowlerExtras + ' ' + teamExtras;
   }
 }

@@ -27,7 +27,6 @@ export class BowlerClass {
     this.deliveryCompleted();
   }
   runsConceded(runs: number) {
-    this.deliveryCompleted();
     this.runs.update(curr => curr + runs);
   }
   wideBowled(wides: number) {
