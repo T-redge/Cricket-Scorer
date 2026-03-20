@@ -1,8 +1,0 @@
-import { signal } from "@angular/core";
-
-export class ExtraClass {
-  wide = signal(0);
-  noball = signal(0);
-  bye = signal(0);
-  legbye = signal(0);
-}
