@@ -27,6 +27,14 @@ export class EndMatchUi {
       return new Team;
     }
   }
+  returnHomeTeamOvers(): string {
+    let ht = this.returnHomeTeam();
+    return ht.returnOversScore();
+  }
+  returnAwayTeamOvers(): string {
+    let at = this.returnAwayTeam();
+    return at.returnOversScore();
+  }
   returnHomeTeamName(): string {
     let ht = this.returnHomeTeam();
     return ht.returnTeamName();

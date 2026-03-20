@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, input, InputSignal, Output, signal } from '@angular/core';
+import { Component, computed, EventEmitter, input, InputSignal, Output, signal, WritableSignal } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatchEvents } from '../event-class/match-events';
 import { Team } from '../team-class/team-class';
@@ -16,6 +16,8 @@ export class SelectPlayerForm {
   awayTeam: InputSignal<Team | undefined> = input();
 
   formLabel: InputSignal<Roles | undefined> = input();
+
+  buttonLabel: WritableSignal<string> = signal('');
 
   returnPlayerType(): string {
     if (this.formLabel() === Roles.Bat) {
@@ -59,11 +61,11 @@ export class SelectPlayerForm {
         return at.returnPlayerNames();
       }
     } else {
-      return ['Hello', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+      return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
     }
   }
 
-  playerChosen = new FormControl(this.returnTeamForm()[0], { nonNullable: true });
+  playerChosen = new FormControl('', { nonNullable: true });
 
   @Output() eventPlayerChosen: EventEmitter<MatchEventTeams> = new EventEmitter();
 
@@ -98,10 +100,6 @@ export class SelectPlayerForm {
   }
 
   returnPlayerName(): string {
-    if (this.playerChosen.dirty) {
-      return this.playerChosen.getRawValue();
-    } else {
-      return ''
-    }
+    return this.playerChosen.value;
   }
 }

@@ -22,8 +22,12 @@
             "assets": [
               {
                 "glob": "**/*.wasm",
-                "input": "projects/wasm-scorer/src/lib/rust-scorer-lib/pkg"
-              }
+                "input": "projects/wasm-scorer/src/lib/rust-scorer-lib/pkg",
+              },
+              {
+                "glob": "**/*",
+                "input": "public",
+              },
             ],
             "styles": [
               "projects/scorer_app/src/styles.css"

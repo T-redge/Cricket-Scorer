@@ -202,6 +202,21 @@ export class App implements OnInit {
       return undefined;
     }
   }
+  checkStrikeChanged(dt: DeliveryType): boolean {
+    if (dt.event === DeliveryEvents.Wide) {
+      if (dt.totalRuns % 2 === 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (dt.totalRuns % 2 !== 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
   checkInningComplete = computed(() => {
     let check = this.currentInnings().checkInningComplete();
     return check;
@@ -284,6 +299,7 @@ export class App implements OnInit {
         let record = this.currentInnings();
         this.currentMatch().inningCompleted(batTeam, record);
         this.showEndOverUi.set(false);
+        this.newInningsStarted.set(false);
         this.showEndInningUi.set(true);
         break;
       }
@@ -308,10 +324,18 @@ export class App implements OnInit {
       case MatchEvents.DeliveryComplete: {
         let dEv: DeliveryType = data;
         this.deliveryEvent(dEv);
+        let batTeam = this.returnBattingTeam();
+        let bowlTeam = this.returnBowlingTeam();
+        if (ov.checkPreviousDeliveryLegit()) {
+          bowlTeam.returnPlayerProfile(dEv.bowler).returnBowlProfile().deliveryCompleted();
+        }
         let ovNum = this.returnOverCount();
         let comms = new CommentaryClass(ovNum, dEv);
         let commEvent = comms.createCommentary();
         this.commentary().unshift(commEvent);
+        if (this.checkStrikeChanged(dEv)) {
+          batTeam.strikeRotated();
+        }
         break;
       }
       case MatchEvents.NewOver: {
@@ -353,9 +377,6 @@ export class App implements OnInit {
         ov.enterDeliveryRecord(delivery);
         batTeam.returnPlayerProfile(batter).returnBatProfile().addRunScored(runs);
         bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().runsConceded(runs);
-        if (runs % 2 !== 0) {
-          batTeam.strikeRotated();
-        }
         break;
       }
       case DeliveryEvents.Wide: {
@@ -399,7 +420,6 @@ export class App implements OnInit {
         break;
       }
     }
-    bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().deliveryCompleted();
   }
   uiEvent(ui: UiEventType) {
     let event = ui.event;

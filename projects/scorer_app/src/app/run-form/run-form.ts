@@ -49,7 +49,7 @@ export class RunForm {
         event: UiEvent.ShowRunForm,
         bool: false,
       };
-      console.log(delivery);
+
       this.hideRunForm.emit(ui);
       this.runEvent.emit(event);
     } else {
