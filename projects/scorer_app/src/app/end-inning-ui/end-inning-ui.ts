@@ -71,12 +71,12 @@ export class EndInningUi {
       return 0.0;
     }
   }
-  returnBatTeamBatters(): Array<[string, string]> {
+  returnBatTeamBatters(): Array<[string, string, string]> {
     let bat = this.returnBatTeam();
     if (bat !== undefined) {
       return bat.returnBattingListScores();
     } else {
-      return [["Default Batter", "Runs(Deliveries)"]];
+      return [["Default Batter", "DNB", "Runs(Deliveries)"]];
     }
   }
   returnBowlTeamBowlers(): Array<[string, string]> {

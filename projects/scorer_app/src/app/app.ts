@@ -62,12 +62,9 @@ export class App implements OnInit {
   showSelectOpeningBatsForm = signal(false);
   showSelectPlayerForm = signal(false);
   formSelect: WritableSignal<Roles> = signal(Roles.Default);
-  showExtraForm = signal(false);
   extraFormTotal = signal(0);
   showEndOverUi = signal(false);
-  showRunForm = signal(false);
   runFormTotal = signal(0);
-  showWicketForm = signal(false);
   showEndMatchUi = signal(false);
   wicketFormDismissal = signal('');
   event = signal('');
@@ -85,7 +82,17 @@ export class App implements OnInit {
   }
   loadEventMap() {
     this.uiEventMap().set(UiEvent.ShowRunForm, false);
-    this.uiEventMap().set(UiEvent.showExtraForm, false);
+    this.uiEventMap().set(UiEvent.ShowExtraForm, false);
+    this.uiEventMap().set(UiEvent.ShowWicketForm, false);
+    this.uiEventMap().set(UiEvent.ShowSelectPlayerForm, false);
+    this.uiEventMap().set(UiEvent.ShowOpeningBatsForm, false);
+    this.uiEventMap().set(UiEvent.ShowTeamsUi, false);
+    this.uiEventMap().set(UiEvent.ShowCoinTossUi, false);
+    this.uiEventMap().set(UiEvent.ShowRoleSelectionUi, false);
+    this.uiEventMap().set(UiEvent.ShowButtonUi, false);
+    this.uiEventMap().set(UiEvent.ShowEndOverUi, false);
+    this.uiEventMap().set(UiEvent.ShowEndInningUi, false);
+    this.uiEventMap().set(UiEvent.ShowEndMatchUi, false);
   }
   changeUi(key: UiEvent, value: boolean) {
     this.uiEventMap().set(key, value);
@@ -267,6 +274,16 @@ export class App implements OnInit {
         break;
       }
       case MatchEvents.BatterChosen: {
+        let b1 = this.returnBattingTeam().returnBatterOne();
+        let batOut = this.returnBattingTeam().returnOnStrikePlayerName();
+
+        let batIn: string = data;
+        if (b1 === batOut) {
+          this.returnBattingTeam().setBatterOne(batIn);
+        } else {
+          this.returnBattingTeam().setBatterTwo(batIn);
+        }
+
         this.showSelectPlayerForm.set(false);
         this.showBtnUi.set(true);
         break;
@@ -394,29 +411,67 @@ export class App implements OnInit {
       }
       case DeliveryEvents.Byes: {
         ov.enterDeliveryRecord(delivery);
-        bowlTeam.byeBowled(runs);
+        batTeam.byeBowled(runs);
         batTeam.returnPlayerProfile(batter).returnBatProfile().addDeliveryFaced();
         break;
       }
       case DeliveryEvents.Legbyes: {
         ov.enterDeliveryRecord(delivery);
-        bowlTeam.legbyeBowled(runs);
+        batTeam.legbyeBowled(runs);
         batTeam.returnPlayerProfile(batter).returnBatProfile().addDeliveryFaced();
         break;
       }
       case DeliveryEvents.Bowled: {
+        ov.enterDeliveryRecord(delivery);
+        batTeam.returnPlayerProfile(batter).returnBatProfile().addDeliveryFaced();
+        batTeam.batterDismissed(delivery.bowler, delivery.event);
+        bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().wicketTaken();
+        if (!batTeam.checkAllOut()) {
+          this.formSelect.set(Roles.Bat);
+          this.showSelectPlayerForm.set(true);
+        }
         break;
       }
       case DeliveryEvents.Caught: {
+        ov.enterDeliveryRecord(delivery);
+        batTeam.returnPlayerProfile(batter).returnBatProfile().addDeliveryFaced();
+        batTeam.batterDismissed(delivery.bowler, delivery.event);
+        bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().wicketTaken();
+        if (!batTeam.checkAllOut()) {
+          this.formSelect.set(Roles.Bat);
+          this.showSelectPlayerForm.set(true);
+        }
         break;
       }
       case DeliveryEvents.Lbw: {
+        ov.enterDeliveryRecord(delivery);
+        batTeam.returnPlayerProfile(batter).returnBatProfile().addDeliveryFaced();
+        batTeam.batterDismissed(delivery.bowler, delivery.event);
+        bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().wicketTaken();
+        if (!batTeam.checkAllOut()) {
+          this.formSelect.set(Roles.Bat);
+          this.showSelectPlayerForm.set(true);
+        }
         break;
       }
       case DeliveryEvents.Stumped: {
+        ov.enterDeliveryRecord(delivery);
+        batTeam.returnPlayerProfile(batter).returnBatProfile().addDeliveryFaced();
+        batTeam.batterDismissed(delivery.bowler, delivery.event);
+        bowlTeam.returnPlayerProfile(bowler).returnBowlProfile().wicketTaken();
+        if (!batTeam.checkAllOut()) {
+          this.formSelect.set(Roles.Bat);
+          this.showSelectPlayerForm.set(true);
+        }
         break;
       }
       case DeliveryEvents.Runout: {
+        ov.enterDeliveryRecord(delivery);
+        batTeam.batterDismissed("", delivery.event);
+        if (!batTeam.checkAllOut()) {
+          this.formSelect.set(Roles.Bat);
+          this.showSelectPlayerForm.set(true);
+        }
         break;
       }
     }

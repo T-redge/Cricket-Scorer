@@ -84,11 +84,26 @@ export class CommentaryClass {
         }
         break;
       }
-      case DeliveryEvents.Bowled: break;
-      case DeliveryEvents.Caught: break;
-      case DeliveryEvents.Lbw: break;
-      case DeliveryEvents.Stumped: break;
-      case DeliveryEvents.Runout: break;
+      case DeliveryEvents.Bowled: {
+        line.set("Wicket - Bowled!");
+        break;
+      }
+      case DeliveryEvents.Caught: {
+        line.set("Wicket - Caught!");
+        break;
+      };
+      case DeliveryEvents.Lbw: {
+        line.set("Wicket - Lbw!");
+        break;
+      }
+      case DeliveryEvents.Stumped: {
+        line.set("Wicket - Stumped!");
+        break;
+      }
+      case DeliveryEvents.Runout: {
+        line.set("Wicket - Runout!");
+        break;
+      }
     }
     return line();
   }

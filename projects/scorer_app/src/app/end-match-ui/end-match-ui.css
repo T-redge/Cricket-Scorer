@@ -40,3 +40,15 @@ td {
   grid-column: 2;
   grid-row: 2;
 }
+#FOW > h4{
+  text-align: left;
+}
+#FOW > ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+ul > li {
+  display: inline-block;
+  margin-right: 5px;
+}

@@ -10,6 +10,13 @@
       </label>
     </div>
     }
-    <button (click)="emitPlayerChosenEvent()">Confirm: {{returnPlayerName()}}</button>
+    <button [disabled]="disableButton()" (click)="emitPlayerChosenEvent()">
+      Confirm: {{returnPlayerName()}}
+      @if (selectionMade()) {
+        @if (lastOverBowlerCheck()) {
+          (Bowled last over!)
+        }
+      }
+      </button>
   </div>
 </html>

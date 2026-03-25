@@ -43,7 +43,7 @@ export class EndMatchUi {
     let at = this.returnAwayTeam();
     return at.returnTeamName();
   }
-  returnHomeTeamBatting(): Array<[string, string]> {
+  returnHomeTeamBatting(): Array<[string, string, string]> {
     let ht = this.returnHomeTeam();
     return ht.returnBattingListScores();
   }
@@ -55,7 +55,7 @@ export class EndMatchUi {
     let ht = this.returnHomeTeam();
     return ht.returnExtras();
   }
-  returnAwayTeamBatting(): Array<[string, string]> {
+  returnAwayTeamBatting(): Array<[string, string, string]> {
     let at = this.returnAwayTeam();
     return at.returnBattingListScores()
   }
@@ -74,5 +74,29 @@ export class EndMatchUi {
   returnAwayTeamScore(): string {
     let at = this.returnAwayTeam();
     return at.returnTeamScore();
+  }
+  returnHomeTeamFow(): Array<string> {
+    let ht = this.returnHomeTeam();
+    let fall: Array<string> = new Array;
+    ht.returnFallofWicket().forEach(fow => {
+      let number = fow[0];
+      let runs = fow[1];
+      let player = fow[2];
+      let line = number + "/" + runs + ": " + player;
+      fall.push(line);
+    });
+    return fall;
+  }
+  returnAwayTeamFow(): Array<string> {
+    let at = this.returnAwayTeam();
+    let fall: Array<string> = new Array;
+    at.returnFallofWicket().forEach(fow => {
+      let number = fow[0];
+      let runs = fow[1];
+      let player = fow[2];
+      let line = number + "-" + runs + ": " + player;
+      fall.push(line);
+    });
+    return fall;
   }
 }

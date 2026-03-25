@@ -1,3 +1,5 @@
+use tokio;
+use tokio_postgres::{Error, NoTls};
 use wasm_bindgen::prelude::wasm_bindgen;
 fn return_edgewater() -> Vec<String> {
     let team: Vec<String> = vec![
@@ -45,7 +47,26 @@ pub fn load_teamfile(team_name: &str) -> Vec<String> {
 
     team
 }
+pub async fn fetch_team_names() -> Result<Vec<String>, Error> {
+    //connect to db
+    let (client, connection) =
+        tokio_postgres::connect("host=localhost dbname=tredge_scorer", NoTls).await?;
+    let mut res: Vec<String> = Vec::new();
+    tokio::spawn(async move {
+        if let Err(e) = connection.await {
+            eprintln!("connection error: {}", e);
+        }
+    });
+    //executes statement
+    let query = client.query("SELECT * FROM teams", &[]).await?;
 
+    for val in query {
+        let data: &str = val.get(1);
+        res.push(data.to_string());
+    }
+
+    return Ok(res);
+}
 #[test]
 pub fn check_edgeteamfile() {
     let edge = "Edgewater";
@@ -61,4 +82,12 @@ pub fn check_morteamfile() {
     let team = load_teamfile(mor);
     let test = team.get(11).unwrap();
     assert_eq!(test, "Zane Gordon");
+}
+#[tokio::test]
+pub async fn test_fetch_team_names() {
+    let value = fetch_team_names().await.unwrap();
+    let team_one = value.get(0).unwrap().to_string();
+    let team_two = value.get(1).unwrap().to_string();
+    assert_eq!(team_one, "Edgewater");
+    assert_eq!(team_two, "Morley");
 }

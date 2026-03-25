@@ -21,7 +21,13 @@ export class EventButtonsUi {
 
   @Output() deliveryEv: EventEmitter<MatchEventTeams> = new EventEmitter();
   @Output() showForm: EventEmitter<UiEventType> = new EventEmitter();
-
+  endInning() {
+    let event: MatchEventTeams = {
+      event: MatchEvents.InningsComplete,
+      data: undefined,
+    }
+    this.deliveryEv.emit(event);
+  }
   endOver() {
     let event: MatchEventTeams = {
       event: MatchEvents.OverComplete,
@@ -36,6 +42,18 @@ export class EventButtonsUi {
       let bowler = bowl.returnCurrentBowler();
       let delivery = bowl.returnPlayerProfile(bowler)!.returnBowlProfile().returnDeliveriesBowled();
       if (ov.checkOverComplete(delivery)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+  checkBatAllOut(): boolean {
+    let bt = this.batTeam();
+    if (bt !== undefined) {
+      if (bt.checkAllOut()) {
         return true;
       } else {
         return false;
@@ -75,9 +93,16 @@ export class EventButtonsUi {
   }
   showExtraForm() {
     let event: UiEventType = {
-      event: UiEvent.showExtraForm,
+      event: UiEvent.ShowExtraForm,
       bool: true,
     }
+    this.showForm.emit(event);
+  }
+  showWicketForm() {
+    let event: UiEventType = {
+      event: UiEvent.ShowWicketForm,
+      bool: true,
+    };
     this.showForm.emit(event);
   }
 }

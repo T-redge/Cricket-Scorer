@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /bazel-out
+./projects/src-tauri/target
 
 # Node
 /node_modules

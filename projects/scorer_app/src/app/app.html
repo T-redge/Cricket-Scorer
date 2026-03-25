@@ -91,6 +91,14 @@
           (hideExtraForm)="uiEvent($event)"
         />
       }
+      @if (loadUi('ShowWicketForm')) {
+          <app-wicket-form
+          [batTeam]="returnBattingTeam()"
+          [bowlTeam]="returnBowlingTeam()"
+          (wicketEvent)="matchEvents($event)"
+          (hideWicketForm)="uiEvent($event)"
+          />
+        }
       @if (showEndOverUi()) {
         <app-end-over-ui
           [checkInningEnd]="checkInningComplete()"

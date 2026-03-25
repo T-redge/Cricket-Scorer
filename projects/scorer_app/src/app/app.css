@@ -9,7 +9,7 @@ body {
   border: solid 2.5px black;
   display: grid;
   grid-template-columns: repeat(4,minmax(0,1fr));
-  grid-template-rows: 4;
+  grid-template-rows: auto auto;
   grid-gap: 5px;
 }
 app-match-settings-form, app-teamlist-ui, app-cointoss-ui, app-roleselect-ui {

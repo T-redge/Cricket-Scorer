@@ -19,6 +19,61 @@ export class SelectPlayerForm {
 
   buttonLabel: WritableSignal<string> = signal('');
 
+  battersOut = computed(() => {
+    let bat = this.returnBatTeamProfile();
+    if (bat !== undefined) {
+      let dismissed = bat.returnFallofWicketNames();
+      return dismissed;
+    } else {
+      return new Array;
+    }
+  });
+  notOutBat = computed(() => {
+    let bat = this.returnBatTeamProfile();
+    if (bat !== undefined) {
+      let batter = bat.returnOffStrikeName();
+      return batter;
+    } else {
+      return "Default Batter";
+    }
+  });
+  lastBowler = computed(() => {
+    let bowl = this.returnBowlTeamProfile();
+    if (bowl !== undefined) {
+      let bowler = bowl.returnCurrentBowler();
+      return bowler;
+    } else {
+      let bowler = "Default Bowler";
+      return bowler;
+    }
+  });
+
+  returnBatTeamProfile(): Team | undefined {
+    let ht = this.homeTeam();
+    let at = this.awayTeam();
+    if (ht !== undefined && at !== undefined) {
+      if (ht.returnTeamRole() === Roles.Bat) {
+        return ht;
+      } else {
+        return at;
+      }
+    } else {
+      return undefined;
+    }
+  }
+  returnBowlTeamProfile(): Team | undefined {
+    let ht = this.homeTeam();
+    let at = this.awayTeam();
+    if (ht !== undefined && at !== undefined) {
+      if (ht.returnTeamRole() === Roles.Bowl) {
+        return ht;
+      } else {
+        return at;
+      }
+    } else {
+      return undefined;
+    }
+  }
   returnPlayerType(): string {
     if (this.formLabel() === Roles.Bat) {
       return "Batter";
@@ -37,7 +92,51 @@ export class SelectPlayerForm {
       return bowlTeam;
     }
   });
-
+  checkNotOutBats(): boolean {
+    if (this.notOutBat() === this.playerChosen.value) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  checkDismissedBats(): boolean {
+    let bool = false;
+    this.battersOut().forEach((name) => {
+      if (name === this.playerChosen.value) {
+        bool = true;
+      }
+    });
+    return bool;
+  }
+  lastOverBowlerCheck(): boolean {
+    if (this.lastBowler() === this.playerChosen.value) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  selectionMade(): boolean {
+    if (this.playerChosen.dirty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  disableButton(): boolean {
+    if (this.formLabel() === Roles.Bowl) {
+      if (!this.selectionMade() || this.lastOverBowlerCheck()) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (this.checkDismissedBats() || this.checkNotOutBats()) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
   returnBattingTeam(): string[] {
     let ht = this.homeTeam();
     let at = this.awayTeam();

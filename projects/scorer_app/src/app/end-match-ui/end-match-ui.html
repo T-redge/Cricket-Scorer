@@ -15,8 +15,8 @@
         @for (score of returnHomeTeamBatting(); track $index) {
         <tr>
           <td id="Name">{{score[0]}}</td>
-          <td></td>
           <td>{{score[1]}}</td>
+          <td>{{score[2]}}</td>
         </tr>
         }
       </table>
@@ -25,11 +25,19 @@
           <th>Overs</th>
           <td>{{returnAwayTeamOvers()}}</td>
           <th>Extras</th>
-          <td>{{returnAwayTeamExtras()}}</td>
+          <td>{{returnHomeTeamExtras()}}</td>
           <th>Total</th>
           <td>{{returnHomeTeamScore()}}</td>
         </tr>
       </table>
+    </div>
+    <div id="FOW">
+    <h4>Fall of Wicket</h4>
+    <ul>
+    @for (wicket of returnHomeTeamFow(); track $index) {
+      <li>{{wicket}}</li>
+    }
+    </ul>
     </div>
     <div id="Bowling">
       <table>
@@ -60,8 +68,8 @@
         @for (score of returnAwayTeamBatting(); track $index) {
         <tr>
           <td id="Name">{{score[0]}}</td>
-          <td></td>
           <td>{{score[1]}}</td>
+          <td>{{score[2]}}</td>
         </tr>
         }
         </table>
@@ -70,11 +78,19 @@
           <th>Overs</th>
           <td id="Score">{{returnHomeTeamOvers()}}</td>
           <th>Extras</th>
-          <td id="Score">{{returnHomeTeamExtras()}}</td>
+          <td id="Score">{{returnAwayTeamExtras()}}</td>
           <th>Total</th>
           <td id="Score">{{returnAwayTeamScore()}}</td>
         </tr>
       </table>
+    </div>
+    <div id="FOW">
+    <h4>Fall of Wicket</h4>
+    <ul>
+    @for (wicket of returnAwayTeamFow();track $index) {
+      <li>{{wicket}}</li>
+    }
+    </ul>
     </div>
     <div id="Bowling">
       <table>

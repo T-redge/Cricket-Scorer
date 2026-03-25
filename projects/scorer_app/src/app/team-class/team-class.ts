@@ -2,13 +2,14 @@ import { computed, isWritableSignal, signal, WritableSignal, ɵɵpureFunction0 }
 import { PlayerClass } from "../player-class/player-class";
 import { Roles } from "../roleselect-ui/roleselect-ui";
 import { TeamExtras } from "../extra-class/extra-class";
+import { DeliveryEvents } from "../event-class/delivery-events";
 
 export class Team {
   private teamName = signal('');
   private tossWon = signal(false);
   private teamRole: WritableSignal<Roles> = signal(Roles.Default);
   private playerMap: Map<string, PlayerClass> = new Map;
-
+  private fallOfWicket: WritableSignal<Array<[number, number, string]>> = signal(new Array);
   private teamExtras: WritableSignal<TeamExtras> = signal(new TeamExtras);
   private teamBowlerWides = signal(0);
   private teamBowlerNb = signal(0);
@@ -41,14 +42,7 @@ export class Team {
     });
     return runs + b + lb + wd + nb;
   });
-  private teamWickets = computed(() => {
-    let wickets = 0;
-    this.playerMap.forEach((profile) => {
-      let w = profile.returnBowlProfile().returnWicketsTaken();
-      wickets += w;
-    });
-    return wickets;
-  });
+  private teamWickets = signal(0);
 
   private batterOne = signal('');
   private batterTwo = signal('');
@@ -56,6 +50,32 @@ export class Team {
   private currentBowler = signal('');
   private lastBowler = signal('');
 
+  returnFallofWicket(): Array<[number, number, string]> {
+    return this.fallOfWicket();
+  }
+  returnFallofWicketNames(): Array<string> {
+    let outBats: Array<string> = new Array;
+    this.fallOfWicket().forEach((player) => {
+      let name = player[2];
+      outBats.push(name);
+    });
+    return outBats;
+  }
+  checkAllOut(): boolean {
+    if (this.teamWickets() === 10) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  batterDismissed(bowlName: string, type: DeliveryEvents) {
+    let wktNum = this.teamWickets() + 1;
+    let batName = this.returnOnStrikePlayerName();
+    let score = this.teamRuns();
+    this.fallOfWicket().push([wktNum, score, batName]);
+    this.teamWickets.update(curr => curr + 1);
+    this.playerMap.get(batName)!.returnBatProfile().playerDismissed(bowlName, type);
+  }
   setTeamName(name: string) {
     this.teamName.set(name);
   }
@@ -89,9 +109,9 @@ export class Team {
   }
   returnTeamScore(): string {
     let runs = this.teamRuns().toString();
-    let wickets = this.teamWickets().toString();
+    let wickets = this.teamWickets();
 
-    let score = wickets + ' - ' + runs;
+    let score = wickets.toString() + ' - ' + runs;
     return score;
   }
   returnOversScore(): string {
@@ -161,7 +181,16 @@ export class Team {
       return b2;
     }
   }
+  returnOffStrikeName(): string {
+    let b1 = this.batterOne();
+    let b2 = this.batterTwo();
 
+    if (this.returnPlayerProfile(b1).batProfile.returnOnstrike()) {
+      return b2;
+    } else {
+      return b1;
+    }
+  }
   checkBatOneStrike(): string {
     let b1 = this.batterOne();
     let bat = this.returnPlayerProfile(b1);
@@ -188,12 +217,14 @@ export class Team {
       return '';
     }
   }
-  returnBattingListScores(): Array<[string, string]> {
-    let list: Array<[string, string]> = [];
+  returnBattingListScores(): Array<[string, string, string]> {
+    let list: Array<[string, string, string]> = [];
     this.playerMap.forEach((profile, name) => {
       let stat = profile.returnBatProfile();
+      let dismissal = stat.returnScore()[0];
+      let score = stat.returnScore()[1];
       let pName = name;
-      list.push([pName, stat.returnScore()]);
+      list.push([pName, dismissal, score]);
     });
     return list;
   }
@@ -202,23 +233,16 @@ export class Team {
     this.playerMap.forEach((pProfile, pName) => {
       let stat = pProfile.returnBowlProfile();
       let name = pName;
-      if (stat.returnOversBowled() > 0) {
+      if (stat.returnOversBowled() > 0 || stat.returnDeliveriesBowled() > 0) {
         list.push([name, stat.returnFigures()[0]]);
       }
     });
     return list;
   }
   returnExtras(): string {
-    let teamExtras = this.teamExtras().returnTeamExtras();
-    let wd = 0;
-    let n = 0;
-    this.playerMap.forEach((profile) => {
-      let wides = profile.returnBowlProfile().returnExtras().returnWideCount();
-      wd += wides;
-      let nb = profile.returnBowlProfile().returnExtras().returnNbCount();
-      n += nb;
-    });
-    let bowlerExtras = 'w ' + wd.toString() + ' nb ' + n.toString();
-    return bowlerExtras + ' ' + teamExtras;
+    let bWd = "wd " + this.teamBowlerWides().toString();
+    let tNb = "nb " + this.teamBowlerNb().toString();
+    let teamExtras = this.teamExtras().returnTeamExtras().toString();
+    return bWd + " " + tNb + " " + teamExtras;
   }
 }

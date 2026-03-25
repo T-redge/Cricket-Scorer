@@ -1,5 +1,9 @@
-import { Component, EventEmitter, input, Output } from '@angular/core';
+import { Component, EventEmitter, input, InputSignal, Output } from '@angular/core';
 import { DeliveryEvents, DeliveryType } from '../event-class/delivery-events';
+import { Team } from '../team-class/team-class';
+import { UiEvent, UiEventType } from '../event-class/ui-events';
+import { MatchEventTeams } from '../match-settings-form/match-settings-form';
+import { MatchEvents } from '../event-class/match-events';
 
 @Component({
   selector: 'app-wicket-form',
@@ -8,49 +12,140 @@ import { DeliveryEvents, DeliveryType } from '../event-class/delivery-events';
   styleUrl: './wicket-form.css',
 })
 export class WicketForm {
-  batter = input('');
-  bowler = input('');
+  batTeam: InputSignal<Team | undefined> = input();
+  bowlTeam: InputSignal<Team | undefined> = input();
 
-  @Output() wicketTaken: EventEmitter<DeliveryType> = new EventEmitter();
+  @Output() wicketEvent: EventEmitter<MatchEventTeams> = new EventEmitter();
+  @Output() hideWicketForm: EventEmitter<UiEventType> = new EventEmitter();
 
   wicketBowled() {
-    let batName = this.batter();
-    let bowlName = this.bowler();
-    let event = DeliveryEvents.Bowled;
+    let bat = this.batTeam();
+    let bowl = this.bowlTeam();
+    if (bat !== undefined && bowl !== undefined) {
+      let batName = bat.returnOnStrikePlayerName();
+      let bowlName = bowl.returnCurrentBowler();
+      let dEv = DeliveryEvents.Bowled;
+      let runs = 0;
 
-    let dType: DeliveryType = { batter: batName, bowler: bowlName, event: event, totalRuns: 0 };
-    this.wicketTaken.emit(dType);
+      let delivery: DeliveryType = {
+        batter: batName, bowler: bowlName, event: dEv, totalRuns: runs,
+      };
+
+      let event: MatchEventTeams = {
+        event: MatchEvents.DeliveryComplete,
+        data: delivery,
+      };
+
+      let ui: UiEventType = {
+        event: UiEvent.ShowWicketForm,
+        bool: false,
+      };
+      this.hideWicketForm.emit(ui);
+      this.wicketEvent.emit(event);
+    }
   }
   wicketCaught() {
-    let batName = this.batter();
-    let bowlName = this.bowler();
-    let event = DeliveryEvents.Caught;
+    let bat = this.batTeam();
+    let bowl = this.bowlTeam();
+    if (bat !== undefined && bowl !== undefined) {
+      let batName = bat.returnOnStrikePlayerName();
+      let bowlName = bowl.returnCurrentBowler();
+      let dEv = DeliveryEvents.Caught;
+      let runs = 0;
 
-    let dType: DeliveryType = { batter: batName, bowler: bowlName, event: event, totalRuns: 0 };
-    this.wicketTaken.emit(dType);
+      let delivery: DeliveryType = {
+        batter: batName, bowler: bowlName, event: dEv, totalRuns: runs,
+      };
+
+      let event: MatchEventTeams = {
+        event: MatchEvents.DeliveryComplete,
+        data: delivery,
+      };
+
+      let ui: UiEventType = {
+        event: UiEvent.ShowWicketForm,
+        bool: false,
+      };
+      this.hideWicketForm.emit(ui);
+      this.wicketEvent.emit(event);
+    }
   }
   wicketLbw() {
-    let batName = this.batter();
-    let bowlName = this.bowler();
-    let event = DeliveryEvents.Lbw;
+    let bat = this.batTeam();
+    let bowl = this.bowlTeam();
+    if (bat !== undefined && bowl !== undefined) {
+      let batName = bat.returnOnStrikePlayerName();
+      let bowlName = bowl.returnCurrentBowler();
+      let dEv = DeliveryEvents.Lbw;
+      let runs = 0;
 
-    let dType: DeliveryType = { batter: batName, bowler: bowlName, event: event, totalRuns: 0 };
-    this.wicketTaken.emit(dType);
+      let delivery: DeliveryType = {
+        batter: batName, bowler: bowlName, event: dEv, totalRuns: runs,
+      };
+
+      let event: MatchEventTeams = {
+        event: MatchEvents.DeliveryComplete,
+        data: delivery,
+      };
+
+      let ui: UiEventType = {
+        event: UiEvent.ShowWicketForm,
+        bool: false,
+      };
+      this.hideWicketForm.emit(ui);
+      this.wicketEvent.emit(event);
+    }
   }
   wicketStumped() {
-    let batName = this.batter();
-    let bowlName = this.bowler();
-    let event = DeliveryEvents.Stumped;
+    let bat = this.batTeam();
+    let bowl = this.bowlTeam();
+    if (bat !== undefined && bowl !== undefined) {
+      let batName = bat.returnOnStrikePlayerName();
+      let bowlName = bowl.returnCurrentBowler();
+      let dEv = DeliveryEvents.Stumped;
+      let runs = 0;
 
-    let dType: DeliveryType = { batter: batName, bowler: bowlName, event: event, totalRuns: 0 };
-    this.wicketTaken.emit(dType);
+      let delivery: DeliveryType = {
+        batter: batName, bowler: bowlName, event: dEv, totalRuns: runs,
+      };
+
+      let event: MatchEventTeams = {
+        event: MatchEvents.DeliveryComplete,
+        data: delivery,
+      };
+
+      let ui: UiEventType = {
+        event: UiEvent.ShowWicketForm,
+        bool: false,
+      };
+      this.hideWicketForm.emit(ui);
+      this.wicketEvent.emit(event);
+    }
   }
   wicketRunout() {
-    let batName = this.batter();
-    let bowlName = this.bowler();
-    let event = DeliveryEvents.Runout;
+    let bat = this.batTeam();
+    let bowl = this.bowlTeam();
+    if (bat !== undefined && bowl !== undefined) {
+      let batName = bat.returnOnStrikePlayerName();
+      let bowlName = bowl.returnCurrentBowler();
+      let dEv = DeliveryEvents.Runout;
+      let runs = 0;
 
-    let dType: DeliveryType = { batter: batName, bowler: bowlName, event: event, totalRuns: 0 };
-    this.wicketTaken.emit(dType);
+      let delivery: DeliveryType = {
+        batter: batName, bowler: bowlName, event: dEv, totalRuns: runs,
+      };
+
+      let event: MatchEventTeams = {
+        event: MatchEvents.DeliveryComplete,
+        data: delivery,
+      };
+
+      let ui: UiEventType = {
+        event: UiEvent.ShowWicketForm,
+        bool: false,
+      };
+      this.hideWicketForm.emit(ui);
+      this.wicketEvent.emit(event);
+    }
   }
 }

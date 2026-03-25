@@ -99,7 +99,7 @@ export class ExtraForm {
         data: delivery,
       };
       let ui: UiEventType = {
-        event: UiEvent.showExtraForm,
+        event: UiEvent.ShowExtraForm,
         bool: false,
       }
       this.extraEvent.emit(event);

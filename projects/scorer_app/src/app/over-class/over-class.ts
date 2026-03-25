@@ -11,11 +11,26 @@ export class OverClass {
     });
     return run;
   });
-  private wickets = signal(0);
+  private wickets = computed(() => {
+    let wickets = 0;
+    this.deliveryRecord().forEach((delivery) => {
+      let d = delivery.event;
+      if (d === DeliveryEvents.Bowled ||
+        d === DeliveryEvents.Caught ||
+        d === DeliveryEvents.Lbw ||
+        d === DeliveryEvents.Stumped ||
+        d === DeliveryEvents.Runout) {
+        wickets += 1;
+      }
+    });
+    return wickets;
+  });
   private extras = computed(() => {
     let extras = 0;
     this.deliveryRecord().forEach((delivery) => {
-      if (delivery.event === DeliveryEvents.Wide) {
+      if (delivery.event === DeliveryEvents.Wide ||
+        delivery.event === DeliveryEvents.Byes ||
+        delivery.event === DeliveryEvents.Legbyes) {
         extras += delivery.totalRuns;
       }
       if (delivery.event === DeliveryEvents.Noball) {
@@ -28,9 +43,6 @@ export class OverClass {
 
   setBowler(bowlName: string) {
     this.bowler.set(bowlName);
-  }
-  wicketTaken() {
-    this.wickets.update(curr => curr + 1);
   }
   enterDeliveryRecord(delivery: DeliveryType) {
     this.deliveryRecord().push(delivery);

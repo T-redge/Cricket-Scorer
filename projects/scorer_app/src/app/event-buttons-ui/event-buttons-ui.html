@@ -4,11 +4,13 @@
   <h4>Delivery Event</h4>
     @if (checkOverComplete()) {
       <button (click)="endOver()" id="EndOver" >End Over</button>
+    } @else if (checkBatAllOut()){
+      <button (click)="endInning()" id="EndOver">End Inning</button>
     } @else {
       <button (click)="dotBall()" id="Dot" >Dot</button>
       <button (click)="showRunForm()" id="Runs" >Runs</button>
       <button (click)="showExtraForm()" id="Extra" >Extra</button>
-      <button id="Wicket" >Wicket</button>
+      <button (click)="showWicketForm() "id="Wicket" >Wicket</button>
     }
 </div>
 

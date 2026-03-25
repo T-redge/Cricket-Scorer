@@ -5,5 +5,15 @@ export type UiEventType = {
 
 export enum UiEvent {
   ShowRunForm = "ShowRunForm",
-  showExtraForm = "ShowExtraForm",
+  ShowExtraForm = "ShowExtraForm",
+  ShowWicketForm = "ShowWicketForm",
+  ShowSelectPlayerForm = "ShowSelectPlayerForm",
+  ShowOpeningBatsForm = "ShowOpeningBatsForm",
+  ShowTeamsUi = "ShowTeamsUi",
+  ShowCoinTossUi = "ShowCoinTossUi",
+  ShowRoleSelectionUi = "ShowRoleSelectionUi",
+  ShowButtonUi = "ShowButtonUi",
+  ShowEndOverUi = "ShowEndOverUi",
+  ShowEndInningUi = "ShowEndInningUi",
+  ShowEndMatchUi = "ShowEndMatchUi",
 }

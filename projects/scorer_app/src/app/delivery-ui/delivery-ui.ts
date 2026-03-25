@@ -35,13 +35,12 @@ export class DeliveryUi {
       case DeliveryEvents.Noball: return 'nb' + runs.toString();
       case DeliveryEvents.Byes: return runs.toString() + 'b';
       case DeliveryEvents.Legbyes: return runs.toString() + 'lb';
-      case DeliveryEvents.Bowled: break;
-      case DeliveryEvents.Caught: break;
-      case DeliveryEvents.Lbw: break;
-      case DeliveryEvents.Stumped: break;
-      case DeliveryEvents.Runout: break;
+      case DeliveryEvents.Bowled: return "Wkt";
+      case DeliveryEvents.Caught: return "Wkt";
+      case DeliveryEvents.Lbw: return "Wkt";
+      case DeliveryEvents.Stumped: return "Wkt";
+      case DeliveryEvents.Runout: return "Wkt";
       default: return '';
     }
-    return ' ';
   }
 }

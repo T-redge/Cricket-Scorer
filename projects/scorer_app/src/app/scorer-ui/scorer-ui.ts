@@ -162,10 +162,10 @@ export class ScorerUi {
     if (ht !== undefined && at !== undefined) {
       if (ht.returnTeamRole() === Roles.Bat) {
         let pStats = ht.returnPlayerProfile(pName).returnBatProfile().returnScore();
-        return pStats;
+        return pStats[1];
       } else {
         let pStats = at.returnPlayerProfile(pName).returnBatProfile().returnScore();
-        return pStats;
+        return pStats[1];
       }
     } else {
       return "s(b)";
@@ -196,9 +196,10 @@ export class ScorerUi {
     }
   }
   returnExtras(): string {
-    let bt = this.returnBowlingTeam();
-    if (bt !== undefined) {
-      return bt.returnExtras();
+    let batTeam = this.returnBattingTeam();
+    if (batTeam !== undefined) {
+      let teamExtras = batTeam.returnExtras();
+      return teamExtras;
     } else {
       console.warn("Undefined extras");
       return " ";
