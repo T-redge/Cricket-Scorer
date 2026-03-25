@@ -1,5 +1,4 @@
 import { Component, computed, signal, WritableSignal, type OnInit } from '@angular/core';
-import { load_teamfile, initRustWasm } from 'wasm-scorer';
 import { TeamlistUi } from './teamlist-ui/teamlist-ui';
 import { CointossUi, TossResult } from './cointoss-ui/cointoss-ui';
 import { RoleChoice, Roles, RoleselectUi } from './roleselect-ui/roleselect-ui';
@@ -22,6 +21,7 @@ import { MatchEventTeams, MatchSettingsForm, MatchSetting } from './match-settin
 import { CommentaryClass, CommentaryType } from './commentary-class/commentary-class';
 import { EndMatchUi } from './end-match-ui/end-match-ui';
 import { UiEvent, UiEventType } from './event-class/ui-events';
+import { fetch_from_db, TeamInterface } from './tauri-command-class/tauri-command-class';
 
 @Component({
   selector: 'app-root',
@@ -31,12 +31,18 @@ import { UiEvent, UiEventType } from './event-class/ui-events';
   styleUrl: './app.css',
 })
 export class App implements OnInit {
-  ngOnInit() {
-    initRustWasm();
+  async ngOnInit() {
+    const teams = await fetch_from_db();
+    if (teams !== undefined) {
+      let t1 = teams.at(0)!;
+      let t2 = teams.at(1)!;
+      this.homeTeamName.set(t1);
+      this.awayTeamName.set(t2);
+    }
   }
 
-  homeTeamName: WritableSignal<string> = signal('');
-  awayTeamName: WritableSignal<string> = signal('');
+  homeTeamName: WritableSignal<TeamInterface> = signal({ id: 0, name: "" });
+  awayTeamName: WritableSignal<TeamInterface> = signal({ id: 0, name: "" });
   maxOvers: WritableSignal<number> = signal(0);
 
   currentMatch: WritableSignal<MatchClass> = signal(new MatchClass());
@@ -74,8 +80,6 @@ export class App implements OnInit {
     let at = settings.away;
     let ov = settings.overs;
 
-    this.homeTeamName.set(ht);
-    this.awayTeamName.set(at);
     this.maxOvers.set(ov);
     this.currentInnings().setMaxOvers(ov);
 
@@ -101,14 +105,14 @@ export class App implements OnInit {
     return this.uiEventMap().get(key)!;
   }
   loadTeams() {
-    let htName = this.homeTeamName();
-    let atName = this.awayTeamName();
+    let htName = this.homeTeamName().name;
+    let atName = this.awayTeamName().name;
     this.teamsMap().set(htName, new Team);
     this.teamsMap().set(atName, new Team);
     this.teamsMap().get(htName)!.setTeamName(htName);
     this.teamsMap().get(atName)!.setTeamName(atName);
-    this.teamsMap().get(htName)!.loadPlayers(load_teamfile(htName));
-    this.teamsMap().get(atName)!.loadPlayers(load_teamfile(atName));
+    //this.teamsMap().get(htName)!.loadPlayers(load_teamfile(htName));
+    //this.teamsMap().get(atName)!.loadPlayers(load_teamfile(atName));
   }
   startNewGame() {
     this.loadTeams();
@@ -128,11 +132,11 @@ export class App implements OnInit {
     }
   }
   returnHomeTeam(): Team {
-    let name = this.homeTeamName();
+    let name = this.homeTeamName().name;
     return this.teamsMap().get(name)!;
   }
   returnAwayTeam(): Team {
-    let name = this.awayTeamName();
+    let name = this.awayTeamName().name;
     return this.teamsMap().get(name)!;
   }
   returnBattingTeam(): Team {

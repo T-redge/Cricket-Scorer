@@ -15,8 +15,8 @@
     }
     @if (showCoinTossUi()) {
       <app-cointoss-ui
-      [homeTeamName]="homeTeamName()"
-      [awayTeamName]="awayTeamName()"
+      [homeTeamName]="homeTeamName().name"
+      [awayTeamName]="awayTeamName().name"
       (tossCompleted)="matchEvents($event)"
       />
     }
