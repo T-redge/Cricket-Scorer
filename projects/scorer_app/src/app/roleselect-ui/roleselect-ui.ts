@@ -19,8 +19,8 @@ export type RoleChoice = {
   styleUrl: './roleselect-ui.css',
 })
 export class RoleselectUi {
-  homeTeam: InputSignal<Team | undefined> = input();
-  awayTeam: InputSignal<Team | undefined> = input();
+  homeTeam: InputSignal<Team> = input(new Team("Home Team"));
+  awayTeam: InputSignal<Team> = input(new Team("Away Team"));
 
   tossDecision: RoleChoice = { win: Roles.Default, loss: Roles.Default };
 
@@ -51,15 +51,12 @@ export class RoleselectUi {
   returnTossWinner(): string {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-    if (ht !== undefined && at !== undefined) {
-      let htResult = ht.returnTossResult();
-      if (htResult) {
-        return ht.returnTeamName();
-      } else {
-        return at.returnTeamName();
-      }
+
+    let htResult = ht.returnTossResult();
+    if (htResult) {
+      return ht.returnTeamName();
     } else {
-      return "Default Winner";
+      return at.returnTeamName();
     }
   }
 }

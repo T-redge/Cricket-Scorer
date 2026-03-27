@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, input, InputSignal, Output } from '@angular/core';
+import { Component, EventEmitter, input, InputSignal, Output } from '@angular/core';
 import { MatchEvents } from '../event-class/match-events';
 import { Team } from '../team-class/team-class';
 import { MatchEventTeams } from '../match-settings-form/match-settings-form';
@@ -10,36 +10,20 @@ import { MatchEventTeams } from '../match-settings-form/match-settings-form';
   styleUrl: './teamlist-ui.css',
 })
 export class TeamlistUi {
-  homeTeam: InputSignal<Team | undefined> = input();
-  awayTeam: InputSignal<Team | undefined> = input();
+  homeTeam: InputSignal<Team> = input(new Team("Home Team"));
+  awayTeam: InputSignal<Team> = input(new Team("Away Team"));
 
   returnHomeName(): string {
-    if (this.homeTeam() !== undefined) {
-      return this.homeTeam()?.returnTeamName()!;
-    } else {
-      return "Default Home";
-    }
+    return this.homeTeam().returnTeamName();
   }
   returnAwayName(): string {
-    if (this.awayTeam() !== undefined) {
-      return this.awayTeam()?.returnTeamName()!;
-    } else {
-      return "Default Away";
-    }
+    return this.awayTeam().returnTeamName();
   }
   returnHomePlayerList(): Array<string> {
-    if (this.homeTeam() !== undefined) {
-      return this.homeTeam()?.returnPlayerNames()!;
-    } else {
-      return ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
-    }
+    return this.homeTeam().returnPlayerNames();
   }
   returnAwayPlayerList(): Array<string> {
-    if (this.awayTeam() !== undefined) {
-      return this.awayTeam()?.returnPlayerNames()!;
-    } else {
-      return ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
-    }
+    return this.awayTeam().returnPlayerNames();
   }
 
   @Output() matchStart: EventEmitter<MatchEventTeams> = new EventEmitter();

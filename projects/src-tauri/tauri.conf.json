@@ -6,7 +6,7 @@
   "build": {
     "frontendDist": "../../dist/scorer_app/browser/",
     "devUrl": "http://localhost:4200",
-    "beforeDevCommand": "npm run dev",
+    "beforeDevCommand": "npm run dev scorer_app",
     "beforeBuildCommand": "npm run build scorer_app"
   },
   "app": {

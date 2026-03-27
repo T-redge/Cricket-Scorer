@@ -14,22 +14,14 @@ export type TossResult = {
   styleUrl: './cointoss-ui.css',
 })
 export class CointossUi {
-  homeTeamName: InputSignal<string | undefined> = input();
-  awayTeamName: InputSignal<string | undefined> = input();
+  homeTeamName: InputSignal<string> = input("Home Team");
+  awayTeamName: InputSignal<string> = input("Away Team");
 
   returnHomeName(): string {
-    if (this.homeTeamName() !== undefined) {
-      return this.homeTeamName()!;
-    } else {
-      return "Default Home"
-    }
+    return this.homeTeamName();
   }
   returnAwayName(): string {
-    if (this.awayTeamName() !== undefined) {
-      return this.awayTeamName()!;
-    } else {
-      return "Default Away";
-    }
+    return this.awayTeamName();
   }
 
   @Output() tossCompleted: EventEmitter<MatchEventTeams> = new EventEmitter();

@@ -13,8 +13,8 @@ import { MatchEvents } from '../event-class/match-events';
   styleUrl: './extra-form.css',
 })
 export class ExtraForm {
-  batTeam: InputSignal<Team | undefined> = input();
-  bowlTeam: InputSignal<Team | undefined> = input();
+  batTeam: InputSignal<Team> = input(new Team("Batting Team"));
+  bowlTeam: InputSignal<Team> = input(new Team("Bowling Team"));
 
   @Output() extraEvent: EventEmitter<MatchEventTeams> = new EventEmitter();
   @Output() hideExtraForm: EventEmitter<UiEventType> = new EventEmitter();
@@ -88,23 +88,21 @@ export class ExtraForm {
   confirmExtrasAmount() {
     let batTeam = this.batTeam();
     let bowlTeam = this.bowlTeam();
-    if (batTeam !== undefined && bowlTeam !== undefined) {
-      let dEv = this.formLabel();
-      let runs = this.numExtras();
-      let batName = batTeam.returnOnStrikePlayerName();
-      let bowlName = bowlTeam.returnCurrentBowler();
-      let delivery: DeliveryType = { batter: batName, bowler: bowlName, event: dEv, totalRuns: runs };
-      let event: MatchEventTeams = {
-        event: MatchEvents.DeliveryComplete,
-        data: delivery,
-      };
-      let ui: UiEventType = {
-        event: UiEvent.ShowExtraForm,
-        bool: false,
-      }
-      this.extraEvent.emit(event);
-      this.hideExtraForm.emit(ui);
+    let dEv = this.formLabel();
+    let runs = this.numExtras();
+    let batName = batTeam.returnOnStrikePlayerName();
+    let bowlName = bowlTeam.returnCurrentBowler();
+    let delivery: DeliveryType = { batter: batName, bowler: bowlName, event: dEv, totalRuns: runs };
+    let event: MatchEventTeams = {
+      event: MatchEvents.DeliveryComplete,
+      data: delivery,
+    };
+    let ui: UiEventType = {
+      event: UiEvent.ShowExtraForm,
+      bool: false,
     }
+    this.extraEvent.emit(event);
+    this.hideExtraForm.emit(ui);
   }
   returnTitleText(): string {
     if (this.formLabel() === DeliveryEvents.Wide) {

@@ -9,15 +9,11 @@ import { OverClass } from '../over-class/over-class';
   styleUrl: './delivery-ui.css',
 })
 export class DeliveryUi {
-  over: InputSignal<OverClass | undefined> = input();
+  over: InputSignal<OverClass> = input(new OverClass);
 
   returnOverRecord(): Array<DeliveryType> {
     let ov = this.over();
-    if (ov !== undefined) {
-      return ov.returnDeliveryRecord();
-    } else {
-      return new Array;
-    }
+    return ov.returnDeliveryRecord();
   }
   checkForDot(dt: DeliveryType): boolean {
     if (dt.event === DeliveryEvents.DotBall) {

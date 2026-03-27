@@ -12,8 +12,8 @@ import { Team } from '../team-class/team-class';
   styleUrl: './run-form.css',
 })
 export class RunForm {
-  batTeam: InputSignal<Team | undefined> = input();
-  bowlTeam: InputSignal<Team | undefined> = input();
+  batTeam: InputSignal<Team> = input(new Team("Batting Team"));
+  bowlTeam: InputSignal<Team> = input(new Team("Bowling Team"));
 
   runsScored = signal(1);
 
@@ -32,28 +32,24 @@ export class RunForm {
   confirmRuns() {
     let bat = this.batTeam();
     let bowl = this.bowlTeam();
-    if (bat !== undefined && bowl !== undefined) {
-      let batName = bat.returnOnStrikePlayerName();
-      let bowlName = bowl.returnCurrentBowler();
-      let dEv = DeliveryEvents.Runs;
-      let runs = this.runsScored();
+    let batName = bat.returnOnStrikePlayerName();
+    let bowlName = bowl.returnCurrentBowler();
+    let dEv = DeliveryEvents.Runs;
+    let runs = this.runsScored();
 
-      let delivery: DeliveryType = { batter: batName, bowler: bowlName, event: dEv, totalRuns: runs };
+    let delivery: DeliveryType = { batter: batName, bowler: bowlName, event: dEv, totalRuns: runs };
 
-      let event: MatchEventTeams = {
-        event: MatchEvents.DeliveryComplete,
-        data: delivery,
-      };
+    let event: MatchEventTeams = {
+      event: MatchEvents.DeliveryComplete,
+      data: delivery,
+    };
 
-      let ui: UiEventType = {
-        event: UiEvent.ShowRunForm,
-        bool: false,
-      };
+    let ui: UiEventType = {
+      event: UiEvent.ShowRunForm,
+      bool: false,
+    };
 
-      this.hideRunForm.emit(ui);
-      this.runEvent.emit(event);
-    } else {
-      console.warn("RunForm: Info undefined");
-    }
+    this.hideRunForm.emit(ui);
+    this.runEvent.emit(event);
   }
 }

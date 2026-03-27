@@ -14,10 +14,10 @@ import { UiEvent, UiEventType } from '../event-class/ui-events';
   styleUrl: './event-buttons-ui.css',
 })
 export class EventButtonsUi {
-  over: InputSignal<OverClass | undefined> = input()
-  inning: InputSignal<InningsClass | undefined> = input();
-  batTeam: InputSignal<Team | undefined> = input();
-  bowlTeam: InputSignal<Team | undefined> = input();
+  over: InputSignal<OverClass> = input(new OverClass);
+  inning: InputSignal<InningsClass> = input(new InningsClass);
+  batTeam: InputSignal<Team> = input(new Team("Batting Team"));
+  bowlTeam: InputSignal<Team> = input(new Team("Bowling Team"));
 
   @Output() deliveryEv: EventEmitter<MatchEventTeams> = new EventEmitter();
   @Output() showForm: EventEmitter<UiEventType> = new EventEmitter();
@@ -38,26 +38,18 @@ export class EventButtonsUi {
   checkOverComplete(): boolean {
     let bowl = this.bowlTeam();
     let ov = this.over();
-    if (ov !== undefined && bowl !== undefined) {
-      let bowler = bowl.returnCurrentBowler();
-      let delivery = bowl.returnPlayerProfile(bowler)!.returnBowlProfile().returnDeliveriesBowled();
-      if (ov.checkOverComplete(delivery)) {
-        return true;
-      } else {
-        return false;
-      }
+    let bowler = bowl.returnCurrentBowler();
+    let delivery = bowl.returnPlayerProfile(bowler)!.returnBowlProfile().returnDeliveriesBowled();
+    if (ov.checkOverComplete(delivery)) {
+      return true;
     } else {
       return false;
     }
   }
   checkBatAllOut(): boolean {
     let bt = this.batTeam();
-    if (bt !== undefined) {
-      if (bt.checkAllOut()) {
-        return true;
-      } else {
-        return false;
-      }
+    if (bt.checkAllOut()) {
+      return true;
     } else {
       return false;
     }
@@ -66,23 +58,19 @@ export class EventButtonsUi {
   dotBall() {
     let ov = this.over();
     let bat = this.batTeam();
-    if (ov !== undefined && bat !== undefined) {
-      let batter = bat.returnOnStrikePlayerName();
-      let bowler = ov.returnBowlerName();
-      let delivery: DeliveryType = {
-        event: DeliveryEvents.DotBall,
-        batter: batter,
-        bowler: bowler,
-        totalRuns: 0,
-      }
-      let event: MatchEventTeams = {
-        event: MatchEvents.DeliveryComplete,
-        data: delivery,
-      };
-      this.deliveryEv.emit(event);
-    } else {
-      console.warn("Error: Over or Batting Team undefined");
+    let batter = bat.returnOnStrikePlayerName();
+    let bowler = ov.returnBowlerName();
+    let delivery: DeliveryType = {
+      event: DeliveryEvents.DotBall,
+      batter: batter,
+      bowler: bowler,
+      totalRuns: 0,
     }
+    let event: MatchEventTeams = {
+      event: MatchEvents.DeliveryComplete,
+      data: delivery,
+    };
+    this.deliveryEv.emit(event);
   }
   showRunForm() {
     let event: UiEventType = {

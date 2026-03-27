@@ -14,7 +14,10 @@ pub fn run() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![db::get_team_names])
+        .invoke_handler(tauri::generate_handler![
+            db::get_team_names,
+            db::get_team_players
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

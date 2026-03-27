@@ -8,24 +8,16 @@ import { Team } from '../team-class/team-class';
   styleUrl: './end-match-ui.css',
 })
 export class EndMatchUi {
-  homeTeam: InputSignal<Team | undefined> = input();
-  awayTeam: InputSignal<Team | undefined> = input();
+  homeTeam: InputSignal<Team> = input(new Team("Home Team"));
+  awayTeam: InputSignal<Team> = input(new Team("Away Team"));
 
   returnHomeTeam(): Team {
     let ht = this.homeTeam();
-    if (ht !== undefined) {
-      return ht;
-    } else {
-      return new Team;
-    }
+    return ht;
   }
   returnAwayTeam(): Team {
     let at = this.awayTeam();
-    if (at !== undefined) {
-      return at;
-    } else {
-      return new Team;
-    }
+    return at;
   }
   returnHomeTeamOvers(): string {
     let ht = this.returnHomeTeam();
@@ -65,7 +57,7 @@ export class EndMatchUi {
   }
   returnAwayTeamExtras(): string {
     let at = this.returnAwayTeam();
-    return at?.returnExtras();
+    return at.returnExtras();
   }
   returnHomeTeamScore(): string {
     let ht = this.returnHomeTeam();

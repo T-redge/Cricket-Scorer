@@ -15,20 +15,16 @@ export type OpeningBats = {
   styleUrl: './select-openers-form.css',
 })
 export class SelectOpenersForm {
-  homeTeam: InputSignal<Team | undefined> = input();
-  awayTeam: InputSignal<Team | undefined> = input();
+  homeTeam: InputSignal<Team> = input(new Team("Home Team"));
+  awayTeam: InputSignal<Team> = input(new Team("Away Team"));
 
   returnBattingTeam(): Array<string> {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bat) {
-        return ht.returnPlayerNames();
-      } else {
-        return at.returnPlayerNames();
-      }
+    if (ht.returnTeamRole() === Roles.Bat) {
+      return ht.returnPlayerNames();
     } else {
-      return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+      return at.returnPlayerNames();
     }
   }
 

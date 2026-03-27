@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { EventBtns } from './event-btns';
+import { EventButtonsUi } from './event-buttons-ui';
 
 describe('EventBtns', () => {
-  let component: EventBtns;
-  let fixture: ComponentFixture<EventBtns>;
+  let component: EventButtonsUi;
+  let fixture: ComponentFixture<EventButtonsUi>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EventBtns]
+      imports: [EventButtonsUi]
     })
-    .compileComponents();
+      .compileComponents();
 
-    fixture = TestBed.createComponent(EventBtns);
+    fixture = TestBed.createComponent(EventButtonsUi);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

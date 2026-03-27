@@ -12,10 +12,10 @@ import { Roles } from '../roleselect-ui/roleselect-ui';
   styleUrl: './select-player-form.css',
 })
 export class SelectPlayerForm {
-  homeTeam: InputSignal<Team | undefined> = input();
-  awayTeam: InputSignal<Team | undefined> = input();
+  homeTeam: InputSignal<Team> = input(new Team("Home Team"));
+  awayTeam: InputSignal<Team> = input(new Team("Away Team"));
 
-  formLabel: InputSignal<Roles | undefined> = input();
+  formLabel = input(Roles.Default);
 
   buttonLabel: WritableSignal<string> = signal('');
 
@@ -48,30 +48,22 @@ export class SelectPlayerForm {
     }
   });
 
-  returnBatTeamProfile(): Team | undefined {
+  returnBatTeamProfile(): Team {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bat) {
-        return ht;
-      } else {
-        return at;
-      }
+    if (ht.returnTeamRole() === Roles.Bat) {
+      return ht;
     } else {
-      return undefined;
+      return at;
     }
   }
-  returnBowlTeamProfile(): Team | undefined {
+  returnBowlTeamProfile(): Team {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bowl) {
-        return ht;
-      } else {
-        return at;
-      }
+    if (ht.returnTeamRole() === Roles.Bowl) {
+      return ht;
     } else {
-      return undefined;
+      return at;
     }
   }
   returnPlayerType(): string {
@@ -140,27 +132,19 @@ export class SelectPlayerForm {
   returnBattingTeam(): string[] {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bat) {
-        return ht.returnPlayerNames();
-      } else {
-        return at.returnPlayerNames();
-      }
+    if (ht.returnTeamRole() === Roles.Bat) {
+      return ht.returnPlayerNames();
     } else {
-      return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+      return at.returnPlayerNames();
     }
   }
   returnBowlingTeam(): string[] {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bowl) {
-        return ht.returnPlayerNames();
-      } else {
-        return at.returnPlayerNames();
-      }
+    if (ht.returnTeamRole() === Roles.Bowl) {
+      return ht.returnPlayerNames();
     } else {
-      return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+      return at.returnPlayerNames();
     }
   }
 

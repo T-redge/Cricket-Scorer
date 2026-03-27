@@ -13,79 +13,51 @@ import { MatchClass } from '../match-class/match-class';
   styleUrl: './end-inning-ui.css',
 })
 export class EndInningUi {
-  homeTeam: InputSignal<Team | undefined> = input();
-  awayTeam: InputSignal<Team | undefined> = input();
+  homeTeam: InputSignal<Team> = input(new Team("Home Team"));
+  awayTeam: InputSignal<Team> = input(new Team("AwayTeam"));
+  inning: InputSignal<InningsClass> = input(new InningsClass);
+  match: InputSignal<MatchClass> = input(new MatchClass({ id: 0, name: " " }, { id: 0, name: "" }, 0));
 
-  inning: InputSignal<InningsClass | undefined> = input();
-  match: InputSignal<MatchClass | undefined> = input();
   @Output() newInningEvent: EventEmitter<MatchEventTeams> = new EventEmitter();
   @Output() endMatchEvent: EventEmitter<MatchEventTeams> = new EventEmitter();
 
-  returnBatTeam(): Team | undefined {
+  returnBatTeam(): Team {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bat) {
-        return ht;
-      } else {
-        return at;
-      }
+    if (ht.returnTeamRole() === Roles.Bat) {
+      return ht;
     } else {
-      return undefined;
+      return at;
     }
   }
-  returnBowlTeam(): Team | undefined {
+  returnBowlTeam(): Team {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bowl) {
-        return ht;
-      } else {
-        return at;
-      }
+    if (ht.returnTeamRole() === Roles.Bowl) {
+      return ht;
     } else {
-      return undefined;
+      return at;
     }
   }
   returnBatTeamName(): string {
     let bat = this.returnBatTeam();
-    if (bat !== undefined) {
-      return bat.returnTeamName();
-    } else {
-      return "Default Team";
-    }
+    return bat.returnTeamName();
   }
   returnBatTeamScore(): string {
     let bat = this.returnBatTeam();
-    if (bat !== undefined) {
-      return bat.returnTeamScore();
-    } else {
-      return "w-runs";
-    }
+    return bat.returnTeamScore();
   }
   returnOversCompleted(): number {
     let inning = this.inning();
-    if (inning !== undefined) {
-      return inning.returnOverCount();
-    } else {
-      return 0.0;
-    }
+    return inning.returnOverCount();
   }
   returnBatTeamBatters(): Array<[string, string, string]> {
     let bat = this.returnBatTeam();
-    if (bat !== undefined) {
-      return bat.returnBattingListScores();
-    } else {
-      return [["Default Batter", "DNB", "Runs(Deliveries)"]];
-    }
+    return bat.returnBattingListScores();
   }
   returnBowlTeamBowlers(): Array<[string, string]> {
     let bowl = this.returnBowlTeam();
-    if (bowl !== undefined) {
-      return bowl.returnBowlerListFigures();
-    } else {
-      return [["Default Bowler", "Ov-Md-Wk-Rn"]];
-    }
+    return bowl.returnBowlerListFigures();
   }
   emitNewInningEvent() {
     let event: MatchEventTeams = {
@@ -103,15 +75,10 @@ export class EndInningUi {
   }
   checkMatchCompleted(): boolean {
     let m = this.match();
-    if (m !== undefined) {
-      if (m.checkMatchComplete()) {
-        return true;
-      } else {
-        return false;
-      }
+    if (m.checkMatchComplete()) {
+      return true;
     } else {
       return false;
     }
-
   }
 }

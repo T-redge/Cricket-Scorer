@@ -3,12 +3,13 @@ import { PlayerClass } from "../player-class/player-class";
 import { Roles } from "../roleselect-ui/roleselect-ui";
 import { TeamExtras } from "../extra-class/extra-class";
 import { DeliveryEvents } from "../event-class/delivery-events";
+import { PlayerInterface } from "../tauri-command-class/tauri-command-class";
 
 export class Team {
-  private teamName = signal('');
+  private name = '';
   private tossWon = signal(false);
   private teamRole: WritableSignal<Roles> = signal(Roles.Default);
-  private playerMap: Map<string, PlayerClass> = new Map;
+  private playerMap: Map<number, PlayerClass> = new Map;
   private fallOfWicket: WritableSignal<Array<[number, number, string]>> = signal(new Array);
   private teamExtras: WritableSignal<TeamExtras> = signal(new TeamExtras);
   private teamBowlerWides = signal(0);
@@ -50,6 +51,10 @@ export class Team {
   private currentBowler = signal('');
   private lastBowler = signal('');
 
+  constructor(teamName: string) {
+    this.name = teamName;
+  }
+
   returnFallofWicket(): Array<[number, number, string]> {
     return this.fallOfWicket();
   }
@@ -74,13 +79,10 @@ export class Team {
     let score = this.teamRuns();
     this.fallOfWicket().push([wktNum, score, batName]);
     this.teamWickets.update(curr => curr + 1);
-    this.playerMap.get(batName)!.returnBatProfile().playerDismissed(bowlName, type);
-  }
-  setTeamName(name: string) {
-    this.teamName.set(name);
+    //this.playerMap.get(batName)!.returnBatProfile().playerDismissed(bowlName, type);
   }
   returnTeamName(): string {
-    return this.teamName();
+    return this.name;
   }
   setCurrentBowler(name: string) {
     this.currentBowler.set(name);
@@ -121,10 +123,13 @@ export class Team {
     let score = overs + '.' + deliveries;
     return score;
   }
-  loadPlayers(players: string[]) {
-    for (let pName of players) {
-      this.playerMap.set(pName, new PlayerClass);
-    }
+  loadPlayers(players: Array<PlayerInterface>) {
+    let p = players;
+    p.forEach(value => {
+      let id = value.id;
+      let name = value.name;
+      this.playerMap.set(id, new PlayerClass(name));
+    });
   }
   setTossResult(win: boolean) {
     this.tossWon.set(win);
@@ -169,7 +174,8 @@ export class Team {
     }
   }
   returnPlayerProfile(name: string): PlayerClass {
-    return this.playerMap.get(name)!;
+    //return this.playerMap.get(name)!;
+    return new PlayerClass('');
   }
   returnOnStrikePlayerName(): string {
     let b1 = this.batterOne();
@@ -224,7 +230,7 @@ export class Team {
       let dismissal = stat.returnScore()[0];
       let score = stat.returnScore()[1];
       let pName = name;
-      list.push([pName, dismissal, score]);
+      //list.push([pName, dismissal, score]);
     });
     return list;
   }
@@ -234,7 +240,7 @@ export class Team {
       let stat = pProfile.returnBowlProfile();
       let name = pName;
       if (stat.returnOversBowled() > 0 || stat.returnDeliveriesBowled() > 0) {
-        list.push([name, stat.returnFigures()[0]]);
+        //list.push([name, stat.returnFigures()[0]]);
       }
     });
     return list;

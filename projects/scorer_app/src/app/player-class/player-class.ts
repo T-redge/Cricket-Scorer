@@ -3,11 +3,13 @@ import { BowlerClass } from './bowler-class/bowler-class';
 import { FielderClass } from './fielder-class/fielder-class';
 
 export class PlayerClass {
+  name: string = "";
   batProfile = new BatterClass();
   bowlProfile = new BowlerClass();
   fieldProfile = new FielderClass();
 
-  constructor() {
+  constructor(playerName: string) {
+    this.name = playerName;
     this.batProfile = new BatterClass();
     this.bowlProfile = new BowlerClass();
     this.fieldProfile = new FielderClass();

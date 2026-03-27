@@ -8,14 +8,10 @@ import { CommentaryType } from '../commentary-class/commentary-class';
   styleUrl: './commentary-ui.css',
 })
 export class CommentaryUi {
-  comms: InputSignal<Array<CommentaryType> | undefined> = input();
+  comms: InputSignal<Array<CommentaryType>> = input(new Array);
 
   returnComms(): Array<CommentaryType> {
-    if (this.comms() !== undefined) {
-      return this.comms()!;
-    } else {
-      return new Array;
-    }
+    return this.comms();
   }
   returnCommOver(ct: CommentaryType): string {
     return ct.commOver;

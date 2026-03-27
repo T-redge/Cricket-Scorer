@@ -3,8 +3,6 @@ import { Team } from '../team-class/team-class';
 import { OverClass } from '../over-class/over-class';
 import { CommentaryUi } from '../commentary-ui/commentary-ui';
 import { Roles } from '../roleselect-ui/roleselect-ui';
-import { InningsClass } from '../innings-class/innings-class';
-import { DeliveryEvents, DeliveryType } from '../event-class/delivery-events';
 import { CommentaryType } from '../commentary-class/commentary-class';
 import { DeliveryUi } from '../delivery-ui/delivery-ui';
 
@@ -15,10 +13,10 @@ import { DeliveryUi } from '../delivery-ui/delivery-ui';
   styleUrl: './scorer-ui.css',
 })
 export class ScorerUi {
-  homeTeam: InputSignal<Team | undefined> = input();
-  awayTeam: InputSignal<Team | undefined> = input();
+  homeTeam: InputSignal<Team> = input(new Team("Home Team"));
+  awayTeam: InputSignal<Team> = input(new Team("Away Team"));
   tossWinner = computed(() => this.returnTossWinner());
-  comms: InputSignal<Array<CommentaryType> | undefined> = input();
+  comms: InputSignal<Array<CommentaryType>> = input(new Array);
   batTeam = computed(() => this.returnBattingTeamName());
   bowlTeam = computed(() => this.returnBowlingTeamName());
   over: InputSignal<OverClass | undefined> = input();
@@ -75,134 +73,92 @@ export class ScorerUi {
   returnTossWinner(): string {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTossResult()) {
-        return ht.returnTeamName();
-      } else {
-        return at.returnTeamName();
-      }
+    if (ht.returnTossResult()) {
+      return ht.returnTeamName();
     } else {
-      return "Default Winner";
+      return at.returnTeamName();
     }
   }
   returnHomeTeamName(): string {
     let ht = this.homeTeam();
-    if (ht !== undefined) {
-      return ht.returnTeamName();
-    } else {
-      return "Default Home";
-    }
+    return ht.returnTeamName();
   }
   returnAwayTeamName(): string {
     let at = this.awayTeam();
-    if (at !== undefined) {
-      return at.returnTeamName();
-    } else {
-      return "Default Away";
-    }
+    return at.returnTeamName();
   }
   returnBattingTeamName(): string {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bat) {
-        return ht.returnTeamName();
-      } else {
-        return at.returnTeamName();
-      }
+    if (ht.returnTeamRole() === Roles.Bat) {
+      return ht.returnTeamName();
     } else {
-      return "Default Team";
+      return at.returnTeamName();
     }
   }
+
   returnBowlingTeamName(): string {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bowl) {
-        return ht.returnTeamName();
-      } else {
-        return at.returnTeamName();
-      }
+    if (ht.returnTeamRole() === Roles.Bowl) {
+      return ht.returnTeamName();
     } else {
-      return "Default Team";
+      return at.returnTeamName();
     }
   }
-  returnBattingTeam(): Team | undefined {
+  returnBattingTeam(): Team {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bat) {
-        return ht;
-      } else {
-        return at;
-      }
+    if (ht.returnTeamRole() === Roles.Bat) {
+      return ht;
     } else {
-      return undefined;
+      return at;
     }
   }
-  returnBowlingTeam(): Team | undefined {
+  returnBowlingTeam(): Team {
     let ht = this.homeTeam();
     let at = this.awayTeam();
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bowl) {
-        return ht;
-      } else {
-        return at;
-      }
+    if (ht.returnTeamRole() === Roles.Bowl) {
+      return ht;
     } else {
-      return undefined;
+      return at;
     }
   }
   returnBatterScores(name: string): string {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     let pName = name;
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bat) {
-        let pStats = ht.returnPlayerProfile(pName).returnBatProfile().returnScore();
-        return pStats[1];
-      } else {
-        let pStats = at.returnPlayerProfile(pName).returnBatProfile().returnScore();
-        return pStats[1];
-      }
+    if (ht.returnTeamRole() === Roles.Bat) {
+      let pStats = ht.returnPlayerProfile(pName).returnBatProfile().returnScore();
+      return pStats[1];
     } else {
-      return "s(b)";
+      let pStats = at.returnPlayerProfile(pName).returnBatProfile().returnScore();
+      return pStats[1];
     }
   }
   returnBowlerFigures(name: string): [string, string] {
     let ht = this.homeTeam();
     let at = this.awayTeam();
     let pName = name;
-    if (ht !== undefined && at !== undefined) {
-      if (ht.returnTeamRole() === Roles.Bowl) {
-        let pStats = ht.returnPlayerProfile(pName);
-        if (pStats !== undefined) {
-          return pStats.returnBowlProfile().returnFigures();
-        } else {
-          return [" ", ""];
-        }
+    if (ht.returnTeamRole() === Roles.Bowl) {
+      let pStats = ht.returnPlayerProfile(pName);
+      if (pStats !== undefined) {
+        return pStats.returnBowlProfile().returnFigures();
       } else {
-        let pStats = at.returnPlayerProfile(pName);
-        if (pStats !== undefined) {
-          return pStats.returnBowlProfile().returnFigures();
-        } else {
-          return ["", ""];
-        }
+        return ["", ""];
       }
     } else {
-      return ["o-m-w-r", "0wd 0nb"];
+      let pStats = at.returnPlayerProfile(pName);
+      if (pStats !== undefined) {
+        return pStats.returnBowlProfile().returnFigures();
+      } else {
+        return ["", ""];
+      }
     }
   }
   returnExtras(): string {
     let batTeam = this.returnBattingTeam();
-    if (batTeam !== undefined) {
-      let teamExtras = batTeam.returnExtras();
-      return teamExtras;
-    } else {
-      console.warn("Undefined extras");
-      return " ";
-    }
+    let teamExtras = batTeam.returnExtras();
+    return teamExtras;
   }
 }

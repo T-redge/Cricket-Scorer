@@ -21,7 +21,7 @@ import { MatchEventTeams, MatchSettingsForm, MatchSetting } from './match-settin
 import { CommentaryClass, CommentaryType } from './commentary-class/commentary-class';
 import { EndMatchUi } from './end-match-ui/end-match-ui';
 import { UiEvent, UiEventType } from './event-class/ui-events';
-import { fetch_from_db, TeamInterface } from './tauri-command-class/tauri-command-class';
+import { fetch_from_db, fetch_players, TeamInterface } from './tauri-command-class/tauri-command-class';
 
 @Component({
   selector: 'app-root',
@@ -34,23 +34,19 @@ export class App implements OnInit {
   async ngOnInit() {
     const teams = await fetch_from_db();
     if (teams !== undefined) {
-      let t1 = teams.at(0)!;
-      let t2 = teams.at(1)!;
-      this.homeTeamName.set(t1);
-      this.awayTeamName.set(t2);
+      teams.forEach(value => {
+        this.teamList.update(arr => [...arr, value])
+      });
     }
   }
+  teamList: WritableSignal<Array<TeamInterface>> = signal([{ id: 0, name: "Default" }]);
 
-  homeTeamName: WritableSignal<TeamInterface> = signal({ id: 0, name: "" });
-  awayTeamName: WritableSignal<TeamInterface> = signal({ id: 0, name: "" });
-  maxOvers: WritableSignal<number> = signal(0);
-
-  currentMatch: WritableSignal<MatchClass> = signal(new MatchClass());
+  currentMatch: WritableSignal<MatchClass> = signal(new MatchClass({ id: 0, name: "" }, { id: 0, name: "" }, 0));
   currentInnings: WritableSignal<InningsClass> = signal(new InningsClass());
   currentOver: WritableSignal<OverClass> = signal(new OverClass());
 
   commentary: WritableSignal<Array<CommentaryType>> = signal(new Array);
-  teamsMap: WritableSignal<Map<string, Team>> = signal(new Map);
+  teamsMap: WritableSignal<Map<number, Team>> = signal(new Map);
   uiEventMap: WritableSignal<Map<string, boolean>> = signal(new Map);
 
   newGame = signal(false);
@@ -79,10 +75,7 @@ export class App implements OnInit {
     let ht = settings.home;
     let at = settings.away;
     let ov = settings.overs;
-
-    this.maxOvers.set(ov);
-    this.currentInnings().setMaxOvers(ov);
-
+    this.currentMatch.update(mc => mc = new MatchClass(ht, at, ov));
   }
   loadEventMap() {
     this.uiEventMap().set(UiEvent.ShowRunForm, false);
@@ -104,15 +97,24 @@ export class App implements OnInit {
   loadUi(key: string): boolean {
     return this.uiEventMap().get(key)!;
   }
-  loadTeams() {
-    let htName = this.homeTeamName().name;
-    let atName = this.awayTeamName().name;
-    this.teamsMap().set(htName, new Team);
-    this.teamsMap().set(atName, new Team);
-    this.teamsMap().get(htName)!.setTeamName(htName);
-    this.teamsMap().get(atName)!.setTeamName(atName);
-    //this.teamsMap().get(htName)!.loadPlayers(load_teamfile(htName));
-    //this.teamsMap().get(atName)!.loadPlayers(load_teamfile(atName));
+  async loadTeams() {
+    let htName = this.currentMatch().returnHomeTeamName();
+    let htId = this.currentMatch().returnHomeTeamId();
+    let atName = this.currentMatch().returnAwayTeamName();
+    let atId = this.currentMatch().returnAwayTeamId();
+
+    let htPlayers = await fetch_players(htId);
+    let atPlayers = await fetch_players(atId);
+    this.teamsMap.update(curr => {
+      const map = new Map(curr);
+
+      map.set(htId, new Team(htName));
+      map.set(atId, new Team(atName));
+
+      map.get(htId)!.loadPlayers(htPlayers!);
+      map.get(atId)!.loadPlayers(atPlayers!);
+      return map;
+    });
   }
   startNewGame() {
     this.loadTeams();
@@ -132,12 +134,12 @@ export class App implements OnInit {
     }
   }
   returnHomeTeam(): Team {
-    let name = this.homeTeamName().name;
-    return this.teamsMap().get(name)!;
+    let id = this.currentMatch().returnHomeTeamId();
+    return this.teamsMap().get(id)!;
   }
   returnAwayTeam(): Team {
-    let name = this.awayTeamName().name;
-    return this.teamsMap().get(name)!;
+    let id = this.currentMatch().returnAwayTeamId();
+    return this.teamsMap().get(id)!;
   }
   returnBattingTeam(): Team {
     let ht = this.returnHomeTeam()!.returnTeamRole();
@@ -229,7 +231,8 @@ export class App implements OnInit {
     }
   }
   checkInningComplete = computed(() => {
-    let check = this.currentInnings().checkInningComplete();
+    let ov = this.currentMatch().retuyrnMaxOver();
+    let check = this.currentInnings().checkInningComplete(ov);
     return check;
   });
   matchEvents(matchEv: MatchEventTeams) {
@@ -329,7 +332,6 @@ export class App implements OnInit {
         this.showEndInningUi.set(false);
         this.currentOver.set(new OverClass());
         this.currentInnings.set(new InningsClass());
-        this.currentInnings().setMaxOvers(this.maxOvers());
         this.showSelectOpeningBatsForm.set(true);
         break;
       }

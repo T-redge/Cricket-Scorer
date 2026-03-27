@@ -6,16 +6,16 @@
     <div id="HomeTeam">
       <label for="ht">Home Team</label>
       <select id="ht" formControlName="selectHomeTeam">
-      @for (teams of teamNames; track $index;) {
-        <option value="{{teams}}">{{teams}}</option>
+      @for (teams of teamList(); track $index;) {
+        <option value="{{teams.id}}">{{teams.name}}</option>
       }
       </select>
     </div>
     <div id="AwayTeam">
       <label for="at">Away Team</label>
       <select id="at" formControlName="selectAwayTeam">
-      @for (teams of teamNames; track $index) {
-        <option value="{{teams}}">{{teams}}</option>
+      @for (teams of teamList(); track $index) {
+        <option value="{{teams.id}}">{{teams.name}}</option>
       }
       </select>
     </div>
@@ -28,6 +28,7 @@
       </select>
     </div>
   </form>
-  <button [disabled]="buttonDisabled()" (click)="submitTeams()">Confirm Teams</button>
+  <button [disabled]="checkHomeAway()" (click)="submitTeams()">Confirm Teams</button>
+
 </div>
 </html>
