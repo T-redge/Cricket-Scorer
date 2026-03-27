@@ -1,18 +1,96 @@
-   0.014467695s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="hello"}: cargo::core::compiler::fingerprint: stale: changed "/home/alex/Projects/tredge-scorer/projects/api-server/src/hello/src/lib.rs"
-   0.014485137s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="hello"}: cargo::core::compiler::fingerprint:           (vs) "/home/alex/Projects/tredge-scorer/projects/api-server/target/debug/.fingerprint/api-server-65698abe5d44f2a6/dep-lib-hello"
-   0.014489600s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="hello"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1774622772, nanos: 602954664 } < FileTime { seconds: 1774622895, nanos: 93238630 }
-   0.014547983s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="hello"}: cargo::core::compiler::fingerprint: fingerprint dirty for api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server)/Check { test: false }/TargetInner { ..: lib_target("hello", ["lib"], "/home/alex/Projects/tredge-scorer/projects/api-server/src/hello/src/lib.rs", Edition2024) }
-   0.014560031s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="hello"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/home/alex/Projects/tredge-scorer/projects/api-server/target/debug/.fingerprint/api-server-65698abe5d44f2a6/dep-lib-hello", reference_mtime: FileTime { seconds: 1774622772, nanos: 602954664 }, stale: "/home/alex/Projects/tredge-scorer/projects/api-server/src/hello/src/lib.rs", stale_mtime: FileTime { seconds: 1774622895, nanos: 93238630 } }))
-   0.014776293s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="hello"}: cargo::core::compiler::fingerprint: stale: changed "/home/alex/Projects/tredge-scorer/projects/api-server/src/hello/src/lib.rs"
-   0.014780426s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="hello"}: cargo::core::compiler::fingerprint:           (vs) "/home/alex/Projects/tredge-scorer/projects/api-server/target/debug/.fingerprint/api-server-b377979dfbbe5c0c/dep-test-lib-hello"
-   0.014783286s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="hello"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1774622772, nanos: 602954664 } < FileTime { seconds: 1774622895, nanos: 93238630 }
-   0.014805143s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="hello"}: cargo::core::compiler::fingerprint: fingerprint dirty for api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server)/Check { test: true }/TargetInner { ..: lib_target("hello", ["lib"], "/home/alex/Projects/tredge-scorer/projects/api-server/src/hello/src/lib.rs", Edition2024) }
-   0.014812940s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="hello"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/home/alex/Projects/tredge-scorer/projects/api-server/target/debug/.fingerprint/api-server-b377979dfbbe5c0c/dep-test-lib-hello", reference_mtime: FileTime { seconds: 1774622772, nanos: 602954664 }, stale: "/home/alex/Projects/tredge-scorer/projects/api-server/src/hello/src/lib.rs", stale_mtime: FileTime { seconds: 1774622895, nanos: 93238630 } }))
-   0.014927618s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="api-server"}: cargo::core::compiler::fingerprint: fingerprint dirty for api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server)/Check { test: false }/TargetInner { name: "api-server", doc: true, ..: with_path("/home/alex/Projects/tredge-scorer/projects/api-server/src/main.rs", Edition2024) }
-   0.014934138s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="api-server"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "hello" })
-   0.015058438s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="api-server"}: cargo::core::compiler::fingerprint: fingerprint dirty for api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server)/Check { test: true }/TargetInner { name: "api-server", doc: true, ..: with_path("/home/alex/Projects/tredge-scorer/projects/api-server/src/main.rs", Edition2024) }
-   0.015064061s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="api-server"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "hello" })
+   0.006748655s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="thread"}: cargo::core::compiler::fingerprint: stale: missing "/home/alex/Projects/tredge-scorer/projects/api-server/src/thread/src/worker.rs"
+   0.006781135s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="thread"}: cargo::core::compiler::fingerprint: fingerprint dirty for api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server)/Check { test: false }/TargetInner { ..: lib_target("thread", ["lib"], "/home/alex/Projects/tredge-scorer/projects/api-server/src/thread/src/lib.rs", Edition2024) }
+   0.006790971s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="thread"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(MissingFile("/home/alex/Projects/tredge-scorer/projects/api-server/src/thread/src/worker.rs")))
+   0.006901980s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="thread"}: cargo::core::compiler::fingerprint: stale: missing "/home/alex/Projects/tredge-scorer/projects/api-server/src/thread/src/lib.rs"
+   0.006912181s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="thread"}: cargo::core::compiler::fingerprint: fingerprint dirty for api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server)/Check { test: true }/TargetInner { ..: lib_target("thread", ["lib"], "/home/alex/Projects/tredge-scorer/projects/api-server/src/thread/src/lib.rs", Edition2024) }
+   0.006915993s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="thread"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(MissingFile("/home/alex/Projects/tredge-scorer/projects/api-server/src/thread/src/lib.rs")))
+   0.006971197s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="api-server"}: cargo::core::compiler::fingerprint: fingerprint error for api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server)/Check { test: false }/TargetInner { name: "api-server", doc: true, ..: with_path("/home/alex/Projects/tredge-scorer/projects/api-server/src/main.rs", Edition2024) }
+   0.006974583s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="api-server"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/alex/Projects/tredge-scorer/projects/api-server/target/debug/.fingerprint/api-server-c986b952e160f3d2/bin-api-server`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/core/src/ops/function.rs:284:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/rt.rs:171:5
+  23: main
+  24: <unknown>
+  25: __libc_start_main
+  26: <unknown>
+   0.011529634s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="api-server"}: cargo::core::compiler::fingerprint: fingerprint error for api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server)/Check { test: true }/TargetInner { name: "api-server", doc: true, ..: with_path("/home/alex/Projects/tredge-scorer/projects/api-server/src/main.rs", Edition2024) }
+   0.011537470s  INFO prepare_target{force=false package_id=api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server) target="api-server"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/alex/Projects/tredge-scorer/projects/api-server/target/debug/.fingerprint/api-server-ebb7361e445848a6/test-bin-api-server`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/core/src/ops/function.rs:284:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/rt.rs:171:5
+  23: main
+  24: <unknown>
+  25: __libc_start_main
+  26: <unknown>
     Checking api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server)
-error: could not compile `api-server` (lib) due to 1 previous error; 2 warnings emitted
+error: could not compile `api-server` (lib) due to 1 previous error
 warning: build failed, waiting for other jobs to finish...
-error: could not compile `api-server` (lib test) due to 1 previous error; 2 warnings emitted
+error: could not compile `api-server` (lib test) due to 1 previous error

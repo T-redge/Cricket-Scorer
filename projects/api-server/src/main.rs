@@ -1,4 +1,3 @@
-use hello::ThreadPool;
 use std::{
     fs,
     io::{BufRead, BufReader, Write},
@@ -6,6 +5,7 @@ use std::{
     thread,
     time::Duration,
 };
+use thread_creator::ThreadPool;
 
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:8989").unwrap();

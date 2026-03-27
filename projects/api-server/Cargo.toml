@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [lib]
-name = "hello"
-path = "./src/hello/src/lib.rs"
+name = "thread_creator"
+path = "./src/thread_creator/src/lib.rs"
 crate-type = ["lib"]
 
 [dependencies]
