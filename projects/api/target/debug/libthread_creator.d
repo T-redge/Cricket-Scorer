@@ -1,0 +1,1 @@
+/home/alex/Projects/tredge-scorer/projects/api/target/debug/libthread_creator.rlib: /home/alex/Projects/tredge-scorer/projects/api/thread_creator/src/lib.rs /home/alex/Projects/tredge-scorer/projects/api/thread_creator/src/worker.rs

@@ -21,7 +21,11 @@ import { MatchEventTeams, MatchSettingsForm, MatchSetting } from './match-settin
 import { CommentaryClass, CommentaryType } from './commentary-class/commentary-class';
 import { EndMatchUi } from './end-match-ui/end-match-ui';
 import { UiEvent, UiEventType } from './event-class/ui-events';
-import { fetch_from_db, fetch_players, TeamInterface } from './tauri-command-class/tauri-command-class';
+import { PlayerInterface, TeamInterface } from './tauri-command-class/tauri-command-class';
+import { Data } from './data';
+import { Observable } from 'rxjs';
+import { isFunction } from 'rxjs/internal/util/isFunction';
+
 
 @Component({
   selector: 'app-root',
@@ -31,16 +35,23 @@ import { fetch_from_db, fetch_players, TeamInterface } from './tauri-command-cla
   styleUrl: './app.css',
 })
 export class App implements OnInit {
-  async ngOnInit() {
-    const teams = await fetch_from_db();
-    if (teams !== undefined) {
-      teams.forEach(value => {
-        this.teamList.update(arr => [...arr, value])
-      });
-    }
+  ngOnInit() {
+    //const teams = await fetch_from_db();
+    //if (teams !== undefined) {
+    //teams.forEach(value => {
+    //this.teamList.update(arr => [...arr, value])
+    //});
+    //}
+    this.get();
+
+  }
+  constructor(private data: Data) { }
+  get() {
+    this.data.get().subscribe(value => {
+      this.teamList.update(arr => [...arr, value[0], value[1]]);
+    });
   }
   teamList: WritableSignal<Array<TeamInterface>> = signal([{ id: 0, name: "Default" }]);
-
   currentMatch: WritableSignal<MatchClass> = signal(new MatchClass({ id: 0, name: "" }, { id: 0, name: "" }, 0));
   currentInnings: WritableSignal<InningsClass> = signal(new InningsClass());
   currentOver: WritableSignal<OverClass> = signal(new OverClass());
@@ -52,6 +63,8 @@ export class App implements OnInit {
   newGame = signal(false);
   newMatchStarted = signal(false);
   newInningsStarted = signal(false);
+
+
   showEndInningUi = signal(false);
   currentDelivery: WritableSignal<DeliveryType> = signal({
     batter: '', bowler: '', event: DeliveryEvents.Default, totalRuns: 0,
@@ -103,16 +116,16 @@ export class App implements OnInit {
     let atName = this.currentMatch().returnAwayTeamName();
     let atId = this.currentMatch().returnAwayTeamId();
 
-    let htPlayers = await fetch_players(htId);
-    let atPlayers = await fetch_players(atId);
+    console.log(this.htPlayers);
+
     this.teamsMap.update(curr => {
       const map = new Map(curr);
 
       map.set(htId, new Team(htName));
       map.set(atId, new Team(atName));
 
-      map.get(htId)!.loadPlayers(htPlayers!);
-      map.get(atId)!.loadPlayers(atPlayers!);
+      //map.get(htId)!.loadPlayers(htPlayers!);
+      //map.get(atId)!.loadPlayers(atPlayers!);
       return map;
     });
   }

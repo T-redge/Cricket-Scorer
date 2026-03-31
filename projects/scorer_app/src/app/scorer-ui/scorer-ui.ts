@@ -19,7 +19,7 @@ export class ScorerUi {
   comms: InputSignal<Array<CommentaryType>> = input(new Array);
   batTeam = computed(() => this.returnBattingTeamName());
   bowlTeam = computed(() => this.returnBowlingTeamName());
-  over: InputSignal<OverClass | undefined> = input();
+  over: InputSignal<OverClass> = input(new OverClass);
 
   homeTeamScore = computed(() => {
     let ht = this.homeTeam();

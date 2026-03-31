@@ -1,0 +1,3 @@
+error: no matching package named `thread_pool` found
+location searched: /home/alex/Projects/tredge-scorer/projects/api-server/src/thread_creator
+required by package `api-server v0.1.0 (/home/alex/Projects/tredge-scorer/projects/api-server)`

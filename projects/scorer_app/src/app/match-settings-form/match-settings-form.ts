@@ -57,6 +57,7 @@ export class MatchSettingsForm {
   checkTeamsMatch(): boolean {
     let ht = this.selectTeams.controls.selectHomeTeam.value;
     let at = this.selectTeams.controls.selectAwayTeam.value;
+
     if (ht === at) {
       return true;
     } else {
@@ -70,10 +71,11 @@ export class MatchSettingsForm {
       return false;
     }
   }
-  returnTeam(team_id: number): TeamInterface {
+  returnTeam(team_id: string): TeamInterface {
     let team: TeamInterface = { id: 0, name: " " };
     this.teamList().forEach(value => {
-      let t_id = value.id;
+
+      let t_id = value.id.toString();
       if (t_id === team_id) {
         team = value;
       }
@@ -86,10 +88,9 @@ export class MatchSettingsForm {
     let ov = this.selectTeams.controls.setMaxOvers.value;
 
 
-    let ht: TeamInterface = this.returnTeam(ht_id);
-    let at: TeamInterface = this.returnTeam(at_id);
+    let ht: TeamInterface = this.returnTeam(ht_id.toString());
+    let at: TeamInterface = this.returnTeam(at_id.toString());
     let totalOver: number = this.returnOverNumber(ov);
-
     let team: MatchSetting = { home: ht, away: at, overs: totalOver };
     let eventEmit: MatchEventTeams = {
       event: MatchEvents.TeamsSelected,

@@ -1,0 +1,1 @@
+/home/alex/Projects/tredge-scorer/projects/api-server/src/db_access/target/debug/libdb_access.rlib: /home/alex/Projects/tredge-scorer/projects/api-server/src/db_access/src/db.rs /home/alex/Projects/tredge-scorer/projects/api-server/src/db_access/src/lib.rs /home/alex/Projects/tredge-scorer/projects/api-server/src/db_access/src/test.rs

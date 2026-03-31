@@ -25,3 +25,4 @@ tauri = { version = "2.10.3", features = [] }
 tauri-plugin-log = "2"
 tokio = {version = "1.50.0", features = ["macros"] }
 tokio-postgres = "0.7.16"
+http-request = "8.91.108"

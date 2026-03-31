@@ -1,0 +1,7 @@
+[workspace]
+members = [
+  "api-server",
+  "thread_creator",
+  "db_access",
+]
+resolver = "3"
